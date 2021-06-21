@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.msa": "m6800-as0",
+        "disdrv.h": "c",
+        "joydrv.h": "c"
+    }
+}
