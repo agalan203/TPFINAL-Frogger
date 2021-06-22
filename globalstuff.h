@@ -35,7 +35,7 @@ typedef struct {
     uint8_t velocidadfila;
 } fila_t;
 
-enum player_action {NONE=0, PLAY, EXIT, UP, DOWN, LEFT, RIGHT}; //play-pause y exitgame-exitprgram se infiere por contexto
+enum player_action {NONE=0, PLAY, EXIT, UP, DOWN, LEFT, RIGHT, TOPSCORES}; //play-pause y exitgame-exitprgram se infiere por contexto
 enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, TORTOISE, SAFE, DEAD};
 
 // GLOBAL VARIABLES

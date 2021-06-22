@@ -2,14 +2,31 @@
 #include <stdio.h>
 #include "globalstuff.h"
 
+//DEFINES LOCALES
+#define THRESHOLD 40
+
 // FUNCTION PROTOTYPES
 int init_raspi (void);
 action_t get_input_raspi (void); //devuelve la accion realizada
 void output_world_raspi (mundo_t * mundo);  //muestra el mundo en un momento dado en el display
 void output_frog_raspi (rana_t * rana); //muestra la rana parpadeante en el display
-void output_initmenu_raspi (void); //muestra el menu de inicio en el display
-void output_gamepaused_raspi (void);  //muestra el menu de pausa en el display
+action_t output_initmenu_raspi (void); //muestra el menu de inicio en el display
+action_t output_gamepaused_raspi (void);  //muestra el menu de pausa en el display
 void output_dead_raspi (void); //muestra cuando muere la rana en el display
+void output_gameover_raspi (void); //muestra la imagen de game over
+dcoord_t get_disp_coord (mundo_t * disp); //trae la coordenada del display donde esta el jugador
+
+// MAIN TEST
+int main (void){
+    action_t accion = NONE;
+
+    init_raspi();
+    accion = output_gamepaused_raspi();
+    printf("%d\n",accion);
+    output_gameover_raspi();
+
+    return 0;
+}
 
 // FUNCION DEFINITIONS
 
@@ -103,8 +120,7 @@ void output_frog_raspi (rana_t * rana){ //se debe invocar cada una cantidad esta
 }
 
 /********************************* MENU PAUSA **************************************/
-void output_gamepaused_raspi (void){  //muestra el menu de pausa en el display
-
+action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el display
     mundo_t gamepausedrpi = {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,1,1,0,1,0,0,1,1,1,0,1,0,1,0,0},
@@ -124,7 +140,9 @@ void output_gamepaused_raspi (void){  //muestra el menu de pausa en el display
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
     dcoord_t myPoint = {};
-    int i,j;
+    action_t accion = NONE;
+    dcoord_t click = {0,0};
+    int i,j, repeat=0;
 
     for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
         for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
@@ -137,10 +155,27 @@ void output_gamepaused_raspi (void){  //muestra el menu de pausa en el display
         }
     }
     disp_update();
+
+    do{ //CREO QUE ESTO ME VA A MODIFICAR TODA LA IMAGEN DEL DISPLAY, OJO
+        click = get_disp_coord (&gamepausedrpi);
+        if ((click.x >= 3) && (click.x <= 5) && (click.y >= 6) && (click.y <= 8)){
+            accion = PLAY;
+            repeat = 1;
+        }
+        else if ((click.x >= 10) && (click.x <= 12) && (click.y >= 6) && (click.y <= 8)){
+            accion = EXIT;
+            repeat = 1;
+        }
+        else {
+            repeat=0;
+        }
+        } while (repeat==0);
+
+    return accion;
 }
 
 /********************************* MENU INICIO **************************************/
-void output_initmenu_raspi (void){ //muestra el menu de inicio en el display
+action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
 
     mundo_t initmenurpi = {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -161,7 +196,9 @@ void output_initmenu_raspi (void){ //muestra el menu de inicio en el display
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}
     };
     dcoord_t myPoint = {};
-    int i,j;
+    action_t accion = NONE;
+    dcoord_t click = {0,0};
+    int i,j,repeat=0;
 
     for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
         for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
@@ -174,6 +211,27 @@ void output_initmenu_raspi (void){ //muestra el menu de inicio en el display
         }
     }
     disp_update();
+    
+    do{     //CREO QUE ESTO ME VA A MODIFICAR TODA LA IMAGEN DEL DISPLAY, OJO
+        click = get_disp_coord (&initmenurpi);
+        if ((click.x >= 4) && (click.x <= 6) && (click.y >= 8) && (click.y <= 10)){
+            accion = PLAY;
+            repeat = 1;
+        }
+        else if ((click.x >= 8) && (click.x <= 10) && (click.y >= 8) && (click.y <= 10)){
+            accion = EXIT;
+            repeat = 1;
+        }
+        else if ((click.x >= 3) && (click.x <= 11) && (click.y >= 12) && (click.y <= 14)){
+            accion = TOPSCORES;
+            repeat = 1;
+        }
+        else {
+            repeat=0;
+        }
+    } while (repeat==0);
+    
+    return accion;
 }
 
 /********************************* DEAD FROG **************************************/
@@ -210,4 +268,89 @@ void output_dead_raspi (void){
         }
     }
     disp_update();
+}
+
+/********************************* GAME OVER **************************************/
+void output_gameover_raspi (void){
+    mundo_t gameover = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0},
+        {1,0,0,0,1,0,1,0,1,1,1,0,1,0,0,0},
+        {1,0,1,0,1,1,1,0,1,0,1,0,1,1,0,0},
+        {1,0,1,0,1,0,1,0,1,0,1,0,1,0,0,0},
+        {1,1,1,0,1,0,1,0,1,0,1,0,1,1,1,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,0,1,0,1,0,1,1,1,0,1,1,1,0},
+        {1,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0},
+        {1,0,1,0,1,0,1,0,1,1,0,0,1,1,1,0},
+        {1,0,1,0,1,0,1,0,1,0,0,0,1,1,0,0},
+        {1,1,1,0,0,1,0,0,1,1,1,0,1,0,1,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
+    dcoord_t myPoint = {};
+    int i,j;
+
+    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
+        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
+            if (gameover[i][j]==0){
+                disp_write(myPoint, D_OFF);
+            } 
+            else if (gameover[i][j]==1){
+                disp_write(myPoint, D_ON);
+            }
+        }
+    }
+    disp_update();
+}
+
+/********************************* GET DISPLAY COORD **************************************/
+dcoord_t get_disp_coord (mundo_t * disp){
+
+    dcoord_t pos = {DISP_MAX_X>>1 , DISP_MAX_Y>>1};	//pos es la posición actual, empieza en el centro de la matriz
+	dcoord_t npos = pos;                            //npos es la próxima posición
+	jcoord_t coord = {0,0};							//coordenadas medidas del joystick
+    dlevel_t aux = D_OFF;
+    //int ** dispp = disp;
+
+	do
+	{
+		disp_update();	//Actualiza el display con el contenido del buffer
+		joy_update();	//Mide las coordenadas del joystick
+		coord = joy_get_coord();	//Guarda las coordenadas medidas
+		
+		//Establece la próxima posición según las coordenadas medidas
+		if(coord.x > THRESHOLD && npos.x < DISP_MAX_X)
+		{
+			npos.x++;
+		}
+		if(coord.x < -THRESHOLD && npos.x > DISP_MIN)
+		{
+			npos.x--;
+		}
+		if(coord.y > THRESHOLD && npos.y > DISP_MIN)
+		{
+			npos.y--;
+		}
+		if(coord.y < -THRESHOLD && npos.y < DISP_MAX_Y)
+		{
+			npos.y++;
+		}
+
+        if ((*disp)[pos.y][pos.x]== 0){
+            aux = D_OFF;
+        }
+        else if ((*disp)[pos.y][pos.x]== 1){
+            aux = D_ON;
+        }
+
+        disp_write(pos,aux);    //reestablece lo que habia previamente en la posicion donde esta el mouse
+		disp_write(npos,D_ON);	//enciende la posición nueva en el buffer
+		pos = npos;				//actualiza la posición actual
+		
+	} while( joy_get_switch() == J_NOPRESS );	//termina si se presiona el switch
+
+    return npos;
 }
