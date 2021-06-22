@@ -7,26 +7,14 @@
 
 // FUNCTION PROTOTYPES
 int init_raspi (void);
-action_t get_input_raspi (void); //devuelve la accion realizada
+action_t get_input_raspi (void);            //devuelve la accion realizada
 void output_world_raspi (mundo_t * mundo);  //muestra el mundo en un momento dado en el display
-void output_frog_raspi (rana_t * rana); //muestra la rana parpadeante en el display
-action_t output_initmenu_raspi (void); //muestra el menu de inicio en el display
-action_t output_gamepaused_raspi (void);  //muestra el menu de pausa en el display
-void output_dead_raspi (void); //muestra cuando muere la rana en el display
-void output_gameover_raspi (void); //muestra la imagen de game over
-dcoord_t get_disp_coord (mundo_t * disp); //trae la coordenada del display donde esta el jugador
-
-// MAIN TEST
-int main (void){
-    action_t accion = NONE;
-
-    init_raspi();
-    accion = output_gamepaused_raspi();
-    printf("%d\n",accion);
-    output_gameover_raspi();
-
-    return 0;
-}
+void output_frog_raspi (rana_t * rana);     //muestra la rana parpadeante en el display
+action_t output_initmenu_raspi (void);      //muestra el menu de inicio en el display
+action_t output_gamepaused_raspi (void);    //muestra el menu de pausa en el display
+void output_dead_raspi (void);              //muestra cuando muere la rana en el display
+void output_gameover_raspi (void);          //muestra la imagen de game over
+dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
 
 // FUNCION DEFINITIONS
 
@@ -120,7 +108,7 @@ void output_frog_raspi (rana_t * rana){ //se debe invocar cada una cantidad esta
 }
 
 /********************************* MENU PAUSA **************************************/
-action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el display
+action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el display y devuelve que quizo hacer el jugador
     mundo_t gamepausedrpi = {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,1,1,0,1,0,0,1,1,1,0,1,0,1,0,0},
@@ -156,7 +144,7 @@ action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el displ
     }
     disp_update();
 
-    do{ //CREO QUE ESTO ME VA A MODIFICAR TODA LA IMAGEN DEL DISPLAY, OJO
+    do{
         click = get_disp_coord (&gamepausedrpi);
         if ((click.x >= 3) && (click.x <= 5) && (click.y >= 6) && (click.y <= 8)){
             accion = PLAY;
@@ -175,7 +163,7 @@ action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el displ
 }
 
 /********************************* MENU INICIO **************************************/
-action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
+action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display y devuelve que quizo hacer el jugador
 
     mundo_t initmenurpi = {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
@@ -212,7 +200,7 @@ action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
     }
     disp_update();
     
-    do{     //CREO QUE ESTO ME VA A MODIFICAR TODA LA IMAGEN DEL DISPLAY, OJO
+    do{
         click = get_disp_coord (&initmenurpi);
         if ((click.x >= 4) && (click.x <= 6) && (click.y >= 8) && (click.y <= 10)){
             accion = PLAY;
@@ -312,8 +300,7 @@ dcoord_t get_disp_coord (mundo_t * disp){
     dcoord_t pos = {DISP_MAX_X>>1 , DISP_MAX_Y>>1};	//pos es la posición actual, empieza en el centro de la matriz
 	dcoord_t npos = pos;                            //npos es la próxima posición
 	jcoord_t coord = {0,0};							//coordenadas medidas del joystick
-    dlevel_t aux = D_OFF;
-    //int ** dispp = disp;
+    dlevel_t aux = D_OFF;                           //para guardar el estado del display original
 
 	do
 	{
@@ -339,6 +326,7 @@ dcoord_t get_disp_coord (mundo_t * disp){
 			npos.y++;
 		}
 
+        // trae lo que deberia haber en el led modificado del display matricial
         if ((*disp)[pos.y][pos.x]== 0){
             aux = D_OFF;
         }
