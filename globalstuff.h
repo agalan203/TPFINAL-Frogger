@@ -22,6 +22,8 @@ typedef uint8_t action_t; //PLAY/PAUSE/UP/DOWN/LEFT/RIGHT/EXITGAME/EXITPROGRAM
 
 typedef uint8_t mundo_t[16][16];
 
+typedef uint8_t rpinr_t[5][3];
+
 typedef struct {
     uint8_t estado; //1 si viva, 0 si muerta
     dcoord_t coords;

@@ -1,3 +1,10 @@
+//NOTAS:
+
+/*
+En todas las funciones se deberia incorporar un pedacito de codigo que muestre
+el highscore por pantalla. El highscore se lee de un file. Cuando este ese file lo incorporo.
+*/
+
 // INCLUDES
 #include "globalstuff.h"
 #include <allegro5/allegro.h>
@@ -12,21 +19,17 @@
 #define HEIGHT 1190
 #define ITEM 70     //ancho y alto de un 'pixel' de la matriz de 16x16
 
-//DISPLAY IMAGES
-#define FRGGR_BCKGRD "all_images/frogger_bck.png"
-#define FRGGR_TITLE "all_images/frogger_title.png"
-
 // FUNCTION PROTOTYPES
 int init_allegro (ALLEGRO_EVENT_QUEUE ** event_queue, ALLEGRO_DISPLAY ** display); //recibe un puntero a la event queue y display; devuelve 0 si todo bien, -1 si fallo
 action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev); //devuelve la accion realizada, action_t es una estructura que guarda acciones
 action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev); //muestra el menu de inicio en el display
-
+action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra el menu de pausa en el display
+action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra los top scores en el display
+action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra el fin del juego en el display
 void output_world_all (mundo_t * mundo,rana_t * rana);  //muestra el mundo en un momento dado en el display
-action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue);  //muestra el menu de pausa en el display
 
 // MAIN TEST
 int main(void) {
-    /****************************************************/
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_EVENT ev;
@@ -34,7 +37,7 @@ int main(void) {
     
     init_allegro(&event_queue,&display);
     
-    accion = output_initmenu_all (event_queue,&ev);
+    accion = output_gameover_all (event_queue,&ev);
 
     //Destruir recursos empleados : SIEMPRE HACERLO EN MAIN
     al_shutdown_font_addon();
@@ -152,6 +155,19 @@ int init_allegro (ALLEGRO_EVENT_QUEUE ** event_queue, ALLEGRO_DISPLAY ** display
 
     return 0;
 }
+/********************************* DESTROY ALLEGRO **************************************/
+    // NO funciona, hay que hacerlo en main.
+    
+    /*
+    //Destruir recursos empleados 
+    al_shutdown_primitives_addon();
+    al_shutdown_image_addon();
+    al_shutdown_font_addon();
+    al_shutdown_ttf_addon();
+    al_destroy_display(display); 
+    al_destroy_event_queue(event_queue);
+    */
+
 /********************************* OUTPUT INIT MENU ALLEGRO **************************************/
 action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){ //muestra el menu de inicio en el display
     ALLEGRO_BITMAP * background = NULL;
@@ -159,7 +175,7 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     action_t accion = NONE;
     int exit = false;
 
-    background = al_load_bitmap (FRGGR_TITLE);
+    background = al_load_bitmap ("all_images/frogger_title.png");
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
@@ -193,15 +209,111 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     return accion;
 }
 
-/********************************* DESTROY ALLEGRO **************************************/
-    // NO funciona, hay que hacerlo en main.
-    
-    /*
-    //Destruir recursos empleados 
-    al_shutdown_primitives_addon();
-    al_shutdown_image_addon();
-    al_shutdown_font_addon();
-    al_shutdown_ttf_addon();
-    al_destroy_display(display); 
-    al_destroy_event_queue(event_queue);
-    */
+/********************************* OUTPUT PAUSED MENU ALLEGRO **************************************/
+action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra el menu de pausa en el display
+    ALLEGRO_BITMAP * background = NULL;
+    ALLEGRO_BITMAP * pause = NULL;
+    ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
+    action_t accion = NONE;
+    int exit = false;
+
+    background = al_load_bitmap ("all_images/frogger_title.png");
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(background,0,0,0);
+
+    pause = al_load_bitmap ("all_images/frogger_pause.png");
+    if(!pause)
+    {
+        fprintf(stderr, "failed to load pause bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(pause,WIDTH/2-55,490,0);
+
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,840,ALLEGRO_ALIGN_CENTRE,"GAME PAUSED");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,910,ALLEGRO_ALIGN_CENTRE,"Press spacebar to resume");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,980,ALLEGRO_ALIGN_CENTRE,"Press escape to exit game");
+
+    al_flip_display();
+
+    do{
+        accion = get_input_all(event_queue,ev);
+        switch (accion){
+            case PLAY:
+            case EXIT:
+                exit = true;
+                break;
+            default:
+                exit = false;
+                break;
+        }
+    } while (exit == false);
+
+    al_destroy_bitmap(background);
+    al_destroy_font(font);
+
+    return accion;
+}
+
+/********************************* OUTPUT GAME OVER ALLEGRO **************************************/
+action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra el fin del juego en el display
+    ALLEGRO_BITMAP * background = NULL;
+    ALLEGRO_BITMAP * square = NULL;
+    ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
+    action_t accion = NONE;
+    int exit = false;
+
+    background = al_load_bitmap ("all_images/frogger_bck.png");
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(background,0,0,0);
+
+    square = al_load_bitmap ("all_images/game_over.png");
+    if(!square)
+    {
+        fprintf(stderr, "failed to load square bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(square,WIDTH/4,300,0);
+
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,530,ALLEGRO_ALIGN_CENTRE,"Press spacebar");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,580,ALLEGRO_ALIGN_CENTRE,"to play again");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,670,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
+
+    al_flip_display();
+
+    do{
+        accion = get_input_all(event_queue,ev);
+        switch (accion){
+            case PLAY:
+            case EXIT:
+                exit = true;
+                break;
+            default:
+                exit = false;
+                break;
+        }
+    } while (exit == false);
+
+    al_destroy_bitmap(background);
+    al_destroy_font(font);
+
+    return accion;
+
+}
+
+/********************************* OUTPUT WORLD ALLEGRO **************************************/
+void output_world_all (mundo_t * mundo,rana_t * rana){  //muestra el mundo en un momento dado en el display
+    //FALTA ESCRIBIR
+}
+
+/********************************* OUTPUT TOP SCORES ALLEGRO **************************************/
+action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra los top scores en el display
+    //FALTA ESCRIBIR: idea: abre el file, la va recorriendo y mostrando por display
+}
