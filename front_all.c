@@ -1,28 +1,45 @@
 // INCLUDES
 #include "globalstuff.h"
-#include <stdint.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_color.h>
 #include <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_font.h>
 
 // DISPLAY CONSTANTS
 #define WIDTH 1120
-#define HEIGHT 1120
+#define HEIGHT 1190
 #define ITEM 70     //ancho y alto de un 'pixel' de la matriz de 16x16
 
-// FUNCTION PROTOTYPES
-int init_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display); //recibe un puntero a la event queue y display; devuelve 0 si todo bien, -1 si fallo
-void shutdown_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display);
+//DISPLAY IMAGES
+#define FRGGR_BCKGRD "all_images/frogger_bck.png"
+#define FRGGR_TITLE "all_images/frogger_title.png"
 
+// FUNCTION PROTOTYPES
+
+int init_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display); //recibe un puntero a la event queue y display; devuelve 0 si todo bien, -1 si fallo
+void shutdown_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display); //destruye todo lo relativo a allegro
 action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue); //devuelve la accion realizada, action_t es una estructura que guarda acciones
 void output_world_all (mundo_t * mundo,rana_t * rana);  //muestra el mundo en un momento dado en el display
-void output_initmenu_all (void); //muestra el menu de inicio en el display
-void output_gamepaused_all (void);  //muestra el menu de pausa en el display
+action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue); //muestra el menu de inicio en el display
+action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue);  //muestra el menu de pausa en el display
+
+// MAIN TEST
+int main(int argc, char **argv) {
+    ALLEGRO_EVENT_QUEUE * event_queue = NULL;
+    ALLEGRO_DISPLAY * display = NULL;
+    action_t accion;
+    
+    init_allegro (event_queue,display);
+    accion = output_initmenu_all (event_queue);
+    shutdown_allegro(event_queue,display);
+    return 0;
+}
 
 // FUNCION DEFINITIONS
+
+/********************************* INIT ALLEGRO **************************************/
 int init_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display){
     //incializo allegro
     if (!al_init()) {
@@ -54,6 +71,33 @@ int init_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display){
         al_destroy_display(display);
         return -1;
     }
+    //imagenes
+    if (!al_init_image_addon()) {
+        fprintf(stderr, "failed to initialize images addon!\n");
+        al_destroy_event_queue(event_queue);
+        al_destroy_display(display);
+        al_shutdown_primitives_addon();
+        return -1;
+    }
+    //fonts
+    if (!al_init_font_addon()) {
+        fprintf(stderr, "failed to initialize fonts addon!\n");
+        al_destroy_event_queue(event_queue);
+        al_destroy_display(display);
+        al_shutdown_primitives_addon();
+        al_shutdown_image_addon();
+        return -1;
+    }
+    //true types fonts
+    if (!al_init_ttf_addon()) {
+        fprintf(stderr, "failed to initialize ttfonts addon!\n");
+        al_destroy_event_queue(event_queue);
+        al_destroy_display(display);
+        al_shutdown_primitives_addon();
+        al_shutdown_image_addon();
+        al_shutdown_font_addon();
+        return -1;
+    }
     //otras cosas que haya que agregar
 
     al_register_event_source(event_queue, al_get_keyboard_event_source()); //REGISTRAMOS EL TECLADO
@@ -61,24 +105,27 @@ int init_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display){
     return 0;
 }
 
+/********************************* DESTROY ALLEGRO **************************************/
 void shutdown_allegro (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_DISPLAY * display){
     
     //Destruir recursos empleados 
     al_shutdown_primitives_addon();
+    al_shutdown_image_addon();
+    al_shutdown_font_addon();
+    al_shutdown_ttf_addon();
     al_destroy_display(display); 
     al_destroy_event_queue(event_queue);
-
-    return 0;
 }
 
+/********************************* GET IMPUT ALLEGRO **************************************/
 action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue){
     
     ALLEGRO_EVENT ev;
-    action_t accion;
+    action_t accion = NONE;
 
     //TIPOS DE EVENTOS POSIBLES: (USAMOS SOLO TECLADO)
 
-    if (al_get_next_event(event_queue, &ev)){ //Toma un evento de la cola
+    if (al_get_next_event(event_queue, &ev)){   //Toma un evento de la cola
         if (ev.type == ALLEGRO_EVENT_KEY_DOWN) {
             switch (ev.keyboard.keycode) {
                 case ALLEGRO_KEY_UP:
@@ -99,11 +146,53 @@ action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue){
                 case ALLEGRO_KEY_ESCAPE:
                     accion = EXIT;
                     break;
+                case ALLEGRO_KEY_T:
+                    accion = TOPSCORES;
+                    break;
             }
         }
     }
     else {
         accion = NONE; 
     }
+    return accion;
+}
+
+action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue){ //muestra el menu de inicio en el display
+    ALLEGRO_BITMAP * background = NULL;
+    ALLEGRO_FONT * font = al_load_font ("all_fonts/FreePixel.ttf",36,0);
+    action_t accion = NONE;
+    int exit = false;
+
+    background = al_load_bitmap (FRGGR_TITLE);
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(background,0,0,0);
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,910,ALLEGRO_ALIGN_CENTRE,"Press spacebar to play");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,980,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,1050,ALLEGRO_ALIGN_CENTRE,"Press T for top scores");
+
+    al_flip_display();
+
+    do{
+        accion = get_input_all(event_queue);
+        switch (accion){
+            case PLAY:
+            case EXIT:
+            case TOPSCORES:
+                exit = true;
+                break;
+            default:
+                exit = false;
+                break;
+        }
+    } while (exit == false);
+
+    al_destroy_bitmap(background);
+    al_destroy_font(font);
+
     return accion;
 }

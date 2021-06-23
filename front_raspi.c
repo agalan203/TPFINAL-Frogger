@@ -1,5 +1,4 @@
 // INCLUDES
-#include <stdio.h>
 #include "globalstuff.h"
 
 //DEFINES LOCALES
@@ -12,6 +11,7 @@ void output_world_raspi (mundo_t * mundo);  //muestra el mundo en un momento dad
 void output_frog_raspi (rana_t * rana);     //muestra la rana parpadeante en el display
 action_t output_initmenu_raspi (void);      //muestra el menu de inicio en el display
 action_t output_gamepaused_raspi (void);    //muestra el menu de pausa en el display
+//action_t output_topscores_raspi (void);     //muestra los top scores en el display (FALTA!!!)
 void output_dead_raspi (void);              //muestra cuando muere la rana en el display
 void output_gameover_raspi (void);          //muestra la imagen de game over
 dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
