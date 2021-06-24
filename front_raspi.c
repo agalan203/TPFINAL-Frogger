@@ -12,10 +12,22 @@ void output_world_raspi (mundo_t * mundo);  //muestra el mundo en un momento dad
 void output_frog_raspi (rana_t * rana);     //muestra la rana parpadeante en el display
 action_t output_initmenu_raspi (void);      //muestra el menu de inicio en el display
 action_t output_gamepaused_raspi (void);    //muestra el menu de pausa en el display
-action_t output_topscores_raspi (void);     //muestra los top scores en el display (FALTA!!!)
+void output_topscores_raspi (void);     //muestra los top scores en el display
 void output_dead_raspi (void);              //muestra cuando muere la rana en el display
-void output_gameover_raspi (void);          //muestra la imagen de game over
+void output_gameover_raspi (void);          //muestra la imagen de game over //QUE MUESTRE EL SCORE
 dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
+void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
+
+// MAIN TEST
+int main (void){
+    init_raspi();
+    output_initmenu_raspi();
+    output_gamepaused_raspi();
+    output_topscores_raspi();
+    output_dead_raspi();
+    return 0;
+}
+
 
 // FUNCION DEFINITIONS
 
@@ -82,7 +94,6 @@ void output_world_raspi (mundo_t * mundo){  //muestra el mundo en un momento dad
                 case TRUCK:
                 case SAFE:
                 case LOG:
-                case TORTOISE:
                 case DEAD:
                     disp_write(myPoint, D_ON);
                     break;
@@ -345,6 +356,170 @@ dcoord_t get_disp_coord (mundo_t * disp){
 }
 
 /********************************* OUTPUT TOP SCORES RASPI **************************************/
-action_t output_topscores_raspi (void){     //muestra los top scores en el display (FALTA!!!)
+void output_topscores_raspi (void){     //muestra los top scores en el display (FALTA!!!)
     //FALTA. Estan escritos los nros, tal vez sirve. Se abre el file y se leen desde ahi.
+    FILE * topscores;
+    mundo_t scores = {
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
+    };
+    int i,j,repeat=0;
+    char string[5];
+    action_t accion = NONE;
+    dcoord_t myPoint = {};
+
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+    }
+
+    for (i=0;i<2;i++){
+        fgets(string,5,topscores);
+        for (j=0;j<4;j++){
+            switch (string[j]){
+                case '0':
+                    cpytoworld(&scores,&cero,6*i,4*j);
+                    break;
+                case '1':
+                    cpytoworld(&scores,&uno,6*i,4*j);
+                    break;
+                case '2':
+                    cpytoworld(&scores,&dos,6*i,4*j);
+                    break;
+                case '3':
+                    cpytoworld(&scores,&tres,6*i,4*j);
+                    break;
+                case '4':
+                    cpytoworld(&scores,&cuatro,6*i,4*j);
+                    break;
+                case '5':
+                    cpytoworld(&scores,&cinco,6*i,4*j);
+                    break;
+                case '6':
+                    cpytoworld(&scores,&seis,6*i,4*j);
+                    break;
+                case '7':
+                    cpytoworld(&scores,&siete,6*i,4*j);
+                    break;
+                case '8':
+                    cpytoworld(&scores,&ocho,6*i,4*j);
+                    break;
+                case '9':
+                    cpytoworld(&scores,&nueve,6*i,4*j);
+                    break;
+            }
+        }
+    }
+
+    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
+        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
+            if (scores[i][j]==0){
+                disp_write(myPoint, D_OFF);
+            } 
+            else if (scores[i][j]==1){
+                disp_write(myPoint, D_ON);
+            }
+        }
+    }
+    disp_update();
+
+    do{
+        accion = get_input_raspi();
+        switch (accion){
+            case PLAY:
+            case RIGHT:
+                repeat = 1;
+                break;
+            default:
+                repeat = 0;
+        }
+    } while (repeat == 0);
+
+    if (accion == RIGHT){
+        for (i=0;i<2;i++){
+            fgets(string,5,topscores);
+            for (j=0;j<4;j++){
+                switch (string[j]){
+                    case '0':
+                        cpytoworld(&scores,&cero,6*i,4*j);
+                        break;
+                    case '1':
+                        cpytoworld(&scores,&uno,6*i,4*j);
+                        break;
+                    case '2':
+                        cpytoworld(&scores,&dos,6*i,4*j);
+                        break;
+                    case '3':
+                        cpytoworld(&scores,&tres,6*i,4*j);
+                        break;
+                    case '4':
+                        cpytoworld(&scores,&cuatro,6*i,4*j);
+                        break;
+                    case '5':
+                        cpytoworld(&scores,&cinco,6*i,4*j);
+                        break;
+                    case '6':
+                        cpytoworld(&scores,&seis,6*i,4*j);
+                        break;
+                    case '7':
+                        cpytoworld(&scores,&siete,6*i,4*j);
+                        break;
+                    case '8':
+                        cpytoworld(&scores,&ocho,6*i,4*j);
+                        break;
+                    case '9':
+                        cpytoworld(&scores,&nueve,6*i,4*j);
+                        break;
+                }
+            }
+        }
+
+        for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
+            for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
+                if (scores[i][j]==0){
+                    disp_write(myPoint, D_OFF);
+                } 
+                else if (scores[i][j]==1){
+                    disp_write(myPoint, D_ON);
+                }
+            }
+        }
+        disp_update();
+        repeat = 0;
+        do{
+            accion = get_input_raspi();
+            switch (accion){
+                case PLAY:
+                    repeat = 1;
+                    break;
+                default:
+                    repeat = 0;
+            }
+        } while (repeat == 0);
+    }
+    fclose(topscores);
+}
+
+/********************************* COPY NR TO WORLD **************************************/
+void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
+    int i,j;
+    for (i=0;i<5;i++){
+        for (j=0;j<3;j++){
+            (*mundo)[xo+i][yo+j]=(*nro)[i][j];
+        }
+    }
 }

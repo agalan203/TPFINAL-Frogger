@@ -38,7 +38,7 @@ typedef struct {
 } fila_t;
 
 enum player_action {NONE=0, PLAY, EXIT, UP, DOWN, LEFT, RIGHT, TOPSCORES}; //play-pause y exitgame-exitprgram se infiere por contexto
-enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, TORTOISE, SAFE, DEAD};
+enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, SAFE, DEAD};
 
 // GLOBAL VARIABLES
 rana_t frog = {.estado=1,.coords.x=8,.coords.y=15,.encendida=0};

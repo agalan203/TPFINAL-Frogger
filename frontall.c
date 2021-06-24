@@ -36,8 +36,10 @@ int main(void) {
     action_t accion;
     
     init_allegro(&event_queue,&display);
-    
-    accion = output_gameover_all (event_queue,&ev);
+    accion = output_initmenu_all(event_queue,&ev);
+    accion = output_gamepaused_all(event_queue,&ev);
+    accion = output_topscores_all (event_queue,&ev);
+    accion = output_gameover_all(event_queue,&ev);
 
     //Destruir recursos empleados : SIEMPRE HACERLO EN MAIN
     al_shutdown_font_addon();
@@ -174,6 +176,14 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
     action_t accion = NONE;
     int exit = false;
+    FILE * topscores;
+    char string[5];
+
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+        return -1;
+    }
 
     background = al_load_bitmap ("all_images/frogger_title.png");
     if(!background)
@@ -182,6 +192,9 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
         return -1;
     }
     al_draw_bitmap(background,0,0,0);
+
+    fgets(string,5,topscores);
+    al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,840,ALLEGRO_ALIGN_CENTRE,"Press spacebar to play");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,910,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
@@ -216,6 +229,14 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
     action_t accion = NONE;
     int exit = false;
+    FILE * topscores;
+    char string[5];
+
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+        return -1;
+    }
 
     background = al_load_bitmap ("all_images/frogger_title.png");
     if(!background)
@@ -232,6 +253,9 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
         return -1;
     }
     al_draw_bitmap(pause,WIDTH/2-55,490,0);
+
+    fgets(string,5,topscores);
+    al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,840,ALLEGRO_ALIGN_CENTRE,"GAME PAUSED");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,910,ALLEGRO_ALIGN_CENTRE,"Press spacebar to resume");
@@ -253,6 +277,7 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     } while (exit == false);
 
     al_destroy_bitmap(background);
+    al_destroy_bitmap(pause);
     al_destroy_font(font);
 
     return accion;
@@ -260,11 +285,19 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
 
 /********************************* OUTPUT GAME OVER ALLEGRO **************************************/
 action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra el fin del juego en el display
+    FILE * topscores;
+    char string[5];
     ALLEGRO_BITMAP * background = NULL;
     ALLEGRO_BITMAP * square = NULL;
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
     action_t accion = NONE;
     int exit = false;
+
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+        return -1;
+    }
 
     background = al_load_bitmap ("all_images/frogger_bck.png");
     if(!background)
@@ -274,7 +307,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     }
     al_draw_bitmap(background,0,0,0);
 
-    square = al_load_bitmap ("all_images/game_over.png");
+    square = al_load_bitmap ("all_images/blackblock.png");
     if(!square)
     {
         fprintf(stderr, "failed to load square bitmap!\n");
@@ -282,6 +315,10 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     }
     al_draw_bitmap(square,WIDTH/4,300,0);
 
+    fgets(string,5,topscores);
+    al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
+
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,370,ALLEGRO_ALIGN_CENTRE,"GAME OVER");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,530,ALLEGRO_ALIGN_CENTRE,"Press spacebar");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,580,ALLEGRO_ALIGN_CENTRE,"to play again");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,670,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
@@ -302,18 +339,76 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     } while (exit == false);
 
     al_destroy_bitmap(background);
+    al_destroy_bitmap(square);
     al_destroy_font(font);
 
     return accion;
 
 }
 
+/********************************* OUTPUT TOP SCORES ALLEGRO **************************************/
+action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra los top scores en el display
+    FILE * topscores;
+    ALLEGRO_BITMAP * background = NULL;
+    ALLEGRO_BITMAP * square = NULL;
+    ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
+    action_t accion = NONE;
+    int exit = false;
+    int i;
+    char string[5];
+
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+        return -1;
+    }
+
+    background = al_load_bitmap ("all_images/frogger_bck.png");
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(background,0,0,0);
+
+    square = al_load_bitmap ("all_images/blackblock.png");
+    if(!square)
+    {
+        fprintf(stderr, "failed to load square bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(square,WIDTH/4,300,0);
+
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,370,ALLEGRO_ALIGN_CENTRE,"TOP SCORES");
+    for (i=0;i<4;i++){
+        fgets(string,5,topscores);
+        al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,490+i*40,ALLEGRO_ALIGN_CENTRE,"%s",string);
+    }
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,750,ALLEGRO_ALIGN_CENTRE,"Press escape to return");
+
+    al_flip_display();
+
+    do{
+        accion = get_input_all(event_queue,ev);
+        switch (accion){
+            case EXIT:
+                exit = true;
+                break;
+            default:
+                exit = false;
+                break;
+        }
+    } while (exit == false);
+
+    al_destroy_bitmap(background);
+    al_destroy_bitmap(square);
+    al_destroy_font(font);
+    fclose(topscores);
+
+    return accion;
+}
+
 /********************************* OUTPUT WORLD ALLEGRO **************************************/
 void output_world_all (mundo_t * mundo,rana_t * rana){  //muestra el mundo en un momento dado en el display
     //FALTA ESCRIBIR
-}
-
-/********************************* OUTPUT TOP SCORES ALLEGRO **************************************/
-action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){  //muestra los top scores en el display
-    //FALTA ESCRIBIR: idea: abre el file, la va recorriendo y mostrando por display
 }
