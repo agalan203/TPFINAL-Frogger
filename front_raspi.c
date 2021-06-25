@@ -17,6 +17,7 @@ void output_dead_raspi (void);              //muestra cuando muere la rana en el
 void output_gameover_raspi (void);          //muestra la imagen de game over y el puntaje obtenido
 dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
 void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
+void output_level_raspi (rana_t * rana);    //muestro el numero del nivel y la cant de vidas FALTA
 
 // MAIN TEST
 int main (void){
@@ -589,4 +590,9 @@ void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
             (*mundo)[xo+i][yo+j]=(*nro)[i][j];
         }
     }
+}
+
+/********************************* OUTPUT LEVEL NR **************************************/
+void output_level_raspi (rana_t * rana){    //muestro el numero del nivel y la cant de vidas FALTA
+
 }
