@@ -218,6 +218,7 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
 
     al_destroy_bitmap(background);
     al_destroy_font(font);
+    fclose(topscores);
 
     return accion;
 }
@@ -279,6 +280,7 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     al_destroy_bitmap(background);
     al_destroy_bitmap(pause);
     al_destroy_font(font);
+    fclose(topscores);
 
     return accion;
 }
@@ -341,6 +343,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     al_destroy_bitmap(background);
     al_destroy_bitmap(square);
     al_destroy_font(font);
+    fclose(topscores);
 
     return accion;
 
@@ -410,5 +413,75 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
 
 /********************************* OUTPUT WORLD ALLEGRO **************************************/
 void output_world_all (mundo_t * mundo,rana_t * rana){  //muestra el mundo en un momento dado en el display
-    //FALTA ESCRIBIR
+    FILE * topscores;
+    char string[5];
+    int i,j;
+    int contlogs;
+    //IMAGENES
+    ALLEGRO_BITMAP * background = NULL;
+    ALLEGRO_BITMAP * automovil = NULL;
+    ALLEGRO_BITMAP * camion = NULL;
+    ALLEGRO_BITMAP * log1 = NULL;
+    ALLEGRO_BITMAP * log2 = NULL;
+    ALLEGRO_BITMAP * log3 = NULL;
+    ALLEGRO_BITMAP * log4 = NULL;
+    ALLEGRO_BITMAP * ranita = NULL;
+    ALLEGRO_BITMAP * ranamuerta = NULL;
+
+    ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
+
+    //inicializa todo lo requerido
+    topscores = fopen("topscores.txt","r+");
+    if(!topscores){
+        fprintf(stderr, "failed to open topscores file!\n");
+        return -1;
+    }
+
+    background = al_load_bitmap ("all_images/frogger_bck.png");
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+    al_draw_bitmap(background,0,0,0);
+
+    fgets(string,5,topscores);
+    al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
+
+    for (i=0; i<CANTFILS; i++){
+        for (j=0; j<CANTCOLS; j++){
+            switch ((*mundo)[i][j]){
+                case STREET:
+                case WATER:
+                case SAFE:
+                case DEAD:
+                    break;                    
+                case CAR:
+                    al_draw_bitmap(automovil,j*70,(i+1)*70,0);
+                    break;
+                case TRUCK:
+                    al_draw_bitmap(camion,j*70,(i+1)*70,0);
+                    j++;
+                    break;
+                case LOG:
+                    //FALTA ESCRIBIR ESTE
+                    break;
+            }
+        }
+    }
+
+    al_flip_display();
+    
+    al_destroy_bitmap(background);
+    al_destroy_bitmap(automovil);
+    al_destroy_bitmap(camion);
+    al_destroy_bitmap(log1);
+    al_destroy_bitmap(log2);
+    al_destroy_bitmap(log3);
+    al_destroy_bitmap(log4);
+    al_destroy_bitmap(ranita);
+    al_destroy_bitmap(ranamuerta);
+    al_destroy_font(font);
+    fclose(topscores);
+
 }
