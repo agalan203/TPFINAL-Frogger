@@ -1,36 +1,113 @@
-// INCLUDES
-#include "globalstuff.h"
-#include "raspistuff.h"
+/***************************************************************************//**
+  @file     +frontraspi.c+
+  @brief    +Front End de Frogger para un display matricial en RPI+
+  @author   +Grupo 1: Albertina Galan+
+ ******************************************************************************/
 
-//DEFINES LOCALES
-#define THRESHOLD 40
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
 
-// FUNCTION PROTOTYPES
-int init_raspi (void);
-action_t get_input_raspi (void);            //devuelve la accion realizada
-void output_world_raspi (mundo_t * mundo);  //muestra el mundo en un momento dado en el display
-void output_frog_raspi (rana_t * rana);     //muestra la rana parpadeante en el display
-action_t output_initmenu_raspi (void);      //muestra el menu de inicio en el display
-action_t output_gamepaused_raspi (void);    //muestra el menu de pausa en el display
-void output_topscores_raspi (void);         //muestra los top scores en el display
-void output_dead_raspi (void);              //muestra cuando muere la rana en el display
-void output_gameover_raspi (void);          //muestra la imagen de game over y el puntaje obtenido
-dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
-void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
-void output_level_raspi (rana_t * rana);    //muestro el numero del nivel y la cant de vidas FALTA
+#include "frontraspi.h"
 
-// MAIN TEST
+/*******************************************************************************
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+
+static dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
+static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
+
+/*******************************************************************************
+ * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
+ ******************************************************************************/
+
+static rpinr_t uno = {
+    {0,1,0},
+    {1,1,0},
+    {0,1,0},
+    {0,1,0},
+    {0,1,0}
+    };
+static rpinr_t dos = {
+    {0,1,0},
+    {1,0,1},
+    {0,1,0},
+    {1,0,0},
+    {1,1,1}
+    };
+static rpinr_t tres = {
+    {1,1,1},
+    {0,0,1},
+    {0,1,1},
+    {0,0,1},
+    {1,1,1}
+    };
+static rpinr_t cuatro = {
+    {1,0,1},
+    {1,0,1},
+    {1,1,1},
+    {0,0,1},
+    {0,0,1}
+    };
+static rpinr_t cinco = {
+    {1,1,1},
+    {1,0,0},
+    {1,1,1},
+    {0,0,1},
+    {1,1,1}
+    };
+static rpinr_t seis = {
+    {1,1,1},
+    {1,0,0},
+    {1,1,1},
+    {1,0,1},
+    {1,1,1}
+    };
+static rpinr_t siete = {
+    {1,1,1},
+    {0,0,1},
+    {0,1,1},
+    {0,0,1},
+    {0,0,1}
+    };
+static rpinr_t ocho = {
+    {1,1,1},
+    {1,0,1},
+    {1,1,1},
+    {1,0,1},
+    {1,1,1}
+    };
+static rpinr_t nueve = {
+    {1,1,1},
+    {1,0,1},
+    {1,1,1},
+    {0,0,1},
+    {0,0,1}
+    };
+static rpinr_t cero = {
+    {1,1,1},
+    {1,0,1},
+    {1,0,1},
+    {1,0,1},
+    {1,1,1}
+    };
+
+
+// MAIN TEST : EJEMPLO
+/*
 int main (void){
     init_raspi();
-    output_initmenu_raspi();
-    output_gamepaused_raspi();
     output_topscores_raspi();
-    output_dead_raspi();
+    output_level_raspi(&frog);
     return 0;
 }
+*/
 
-
-// FUNCION DEFINITIONS
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 /********************************* INIT RPI **************************************/
 int init_raspi (void) {
@@ -374,58 +451,8 @@ void output_gameover_raspi (void){
     disp_update();
 }
 
-/********************************* GET DISPLAY COORD **************************************/
-dcoord_t get_disp_coord (mundo_t * disp){
-
-    dcoord_t pos = {DISP_MAX_X>>1 , DISP_MAX_Y>>1};	//pos es la posición actual, empieza en el centro de la matriz
-	dcoord_t npos = pos;                            //npos es la próxima posición
-	jcoord_t coord = {0,0};							//coordenadas medidas del joystick
-    dlevel_t aux = D_OFF;                           //para guardar el estado del display original
-
-	do
-	{
-		disp_update();	//Actualiza el display con el contenido del buffer
-		joy_update();	//Mide las coordenadas del joystick
-		coord = joy_get_coord();	//Guarda las coordenadas medidas
-		
-		//Establece la próxima posición según las coordenadas medidas
-		if(coord.x > THRESHOLD && npos.x < DISP_MAX_X)
-		{
-			npos.x++;
-		}
-		if(coord.x < -THRESHOLD && npos.x > DISP_MIN)
-		{
-			npos.x--;
-		}
-		if(coord.y > THRESHOLD && npos.y > DISP_MIN)
-		{
-			npos.y--;
-		}
-		if(coord.y < -THRESHOLD && npos.y < DISP_MAX_Y)
-		{
-			npos.y++;
-		}
-
-        // trae lo que deberia haber en el led modificado del display matricial
-        if ((*disp)[pos.y][pos.x]== 0){
-            aux = D_OFF;
-        }
-        else if ((*disp)[pos.y][pos.x]== 1){
-            aux = D_ON;
-        }
-
-        disp_write(pos,aux);    //reestablece lo que habia previamente en la posicion donde esta el mouse
-		disp_write(npos,D_ON);	//enciende la posición nueva en el buffer
-		pos = npos;				//actualiza la posición actual
-		
-	} while( joy_get_switch() == J_NOPRESS );	//termina si se presiona el switch
-
-    return npos;
-}
-
 /********************************* OUTPUT TOP SCORES RASPI **************************************/
-void output_topscores_raspi (void){     //muestra los top scores en el display (FALTA!!!)
-    //FALTA. Estan escritos los nros, tal vez sirve. Se abre el file y se leen desde ahi.
+void output_topscores_raspi (void){     //muestra los top scores en el display
     FILE * topscores;
     mundo_t scores = {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -582,8 +609,80 @@ void output_topscores_raspi (void){     //muestra los top scores en el display (
     fclose(topscores);
 }
 
+/********************************* OUTPUT LEVEL NR **************************************/
+void output_level_raspi (rana_t * rana){    //muestro el numero del nivel y la cant de vidas
+mundo_t level = {
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,1},
+        {1,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1},
+        {1,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1},
+        {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+    };
+    dcoord_t myPoint = {};
+    int i,j;
+
+    switch (rana->nivel){
+        case '1':
+            cpytoworld(&level,&uno,2,10);
+            break;
+        case '2':
+            cpytoworld(&level,&dos,2,10);
+            break;
+        case '3':
+            cpytoworld(&level,&tres,2,10);
+            break;
+        case '4':
+            cpytoworld(&level,&cuatro,2,10);
+            break;
+        case '5':
+            cpytoworld(&level,&cinco,2,10);
+            break;
+    }
+    switch (rana->vidas){
+        case 1:
+            cpytoworld(&level,&uno,9,4);
+            break;
+        case 2:
+            cpytoworld(&level,&dos,9,4);
+            break;
+        case 3:
+            cpytoworld(&level,&tres,9,4);
+            break;
+    }
+
+    
+    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
+        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
+            if (level[i][j]==0){
+                disp_write(myPoint, D_OFF);
+            } 
+            else if (level[i][j]==1){
+                disp_write(myPoint, D_ON);
+            }
+        }
+    }
+    disp_update();
+}
+
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
 /********************************* COPY NR TO WORLD **************************************/
-void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
+static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
     int i,j;
     for (i=0;i<5;i++){
         for (j=0;j<3;j++){
@@ -592,7 +691,51 @@ void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
     }
 }
 
-/********************************* OUTPUT LEVEL NR **************************************/
-void output_level_raspi (rana_t * rana){    //muestro el numero del nivel y la cant de vidas FALTA
+/********************************* GET DISPLAY COORD **************************************/
+static dcoord_t get_disp_coord (mundo_t * disp){
 
+    dcoord_t pos = {DISP_MAX_X>>1 , DISP_MAX_Y>>1};	//pos es la posición actual, empieza en el centro de la matriz
+	dcoord_t npos = pos;                            //npos es la próxima posición
+	jcoord_t coord = {0,0};							//coordenadas medidas del joystick
+    dlevel_t aux = D_OFF;                           //para guardar el estado del display original
+
+	do
+	{
+		disp_update();	//Actualiza el display con el contenido del buffer
+		joy_update();	//Mide las coordenadas del joystick
+		coord = joy_get_coord();	//Guarda las coordenadas medidas
+		
+		//Establece la próxima posición según las coordenadas medidas
+		if(coord.x > THRESHOLD && npos.x < DISP_MAX_X)
+		{
+			npos.x++;
+		}
+		if(coord.x < -THRESHOLD && npos.x > DISP_MIN)
+		{
+			npos.x--;
+		}
+		if(coord.y > THRESHOLD && npos.y > DISP_MIN)
+		{
+			npos.y--;
+		}
+		if(coord.y < -THRESHOLD && npos.y < DISP_MAX_Y)
+		{
+			npos.y++;
+		}
+
+        // trae lo que deberia haber en el led modificado del display matricial
+        if ((*disp)[pos.y][pos.x]== 0){
+            aux = D_OFF;
+        }
+        else if ((*disp)[pos.y][pos.x]== 1){
+            aux = D_ON;
+        }
+
+        disp_write(pos,aux);    //reestablece lo que habia previamente en la posicion donde esta el mouse
+		disp_write(npos,D_ON);	//enciende la posición nueva en el buffer
+		pos = npos;				//actualiza la posición actual
+		
+	} while( joy_get_switch() == J_NOPRESS );	//termina si se presiona el switch
+
+    return npos;
 }

@@ -1,34 +1,17 @@
-//NOTAS:
+/***************************************************************************//**
+  @file     +frontall.c+
+  @brief    +Front End de Frogger para un display grafico con librerias Allegro+
+  @author   +Grupo 1: Albertina Galan+
+ ******************************************************************************/
 
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
+
+#include "frontall.h"
+
+// MAIN TEST : EJEMPLO
 /*
-En todas las funciones se deberia incorporar un pedacito de codigo que muestre
-el highscore por pantalla. El highscore se lee de un file. Cuando este ese file lo incorporo.
-*/
-
-// INCLUDES
-#include "globalstuff.h"
-#include <allegro5/allegro.h>
-#include <allegro5/allegro_color.h>
-#include <allegro5/allegro_primitives.h>
-#include <allegro5/allegro_image.h>
-#include <allegro5/allegro_ttf.h>
-#include <allegro5/allegro_font.h>
-
-// DISPLAY CONSTANTS
-#define WIDTH 1120
-#define HEIGHT 1190
-#define ITEM 70     //ancho y alto de un 'pixel' de la matriz de 16x16
-
-// FUNCTION PROTOTYPES
-int init_allegro (ALLEGRO_EVENT_QUEUE ** event_queue, ALLEGRO_DISPLAY ** display); //recibe un puntero a la event queue y display; devuelve 0 si todo bien, -1 si fallo
-action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev); //devuelve la accion realizada, action_t es una estructura que guarda acciones
-action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev); //muestra el menu de inicio en el display
-action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra el menu de pausa en el display
-action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra los top scores en el display
-action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);  //muestra el fin del juego en el display
-int output_world_all (rana_t * rana, mundo_t * mundo);  //muestra el mundo en un momento dado en el display
-
-// MAIN TEST
 int main(void) {
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -48,8 +31,14 @@ int main(void) {
 
     return 0;
 }
+*/
 
-// FUNCION DEFINITIONS
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
 /********************************* GET IMPUT ALLEGRO **************************************/
 action_t get_input_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){
     
@@ -417,7 +406,8 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     int contlogs;
     //IMAGENES
     ALLEGRO_BITMAP * background = NULL;
-    ALLEGRO_BITMAP * automovil = NULL;
+    ALLEGRO_BITMAP * automovil1 = NULL;
+    ALLEGRO_BITMAP * automovil2 = NULL;
     ALLEGRO_BITMAP * camion = NULL;
     ALLEGRO_BITMAP * log2 = NULL;
     ALLEGRO_BITMAP * log3 = NULL;
@@ -442,10 +432,17 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
         return -1;
     }
 
-    automovil = al_load_bitmap ("all_images/car1.png");
-    if(!automovil)
+    automovil1 = al_load_bitmap ("all_images/car1.png");
+    if(!automovil1)
     {
-        fprintf(stderr, "failed to load automovil bitmap!\n");
+        fprintf(stderr, "failed to load automovil1 bitmap!\n");
+        return -1;
+    }
+
+    automovil2 = al_load_bitmap ("all_images/car4.png");
+    if(!automovil2)
+    {
+        fprintf(stderr, "failed to load automovil2 bitmap!\n");
         return -1;
     }
 
@@ -514,10 +511,15 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
                 case DEAD:
                     break;                    
                 case CAR:
-                    al_draw_bitmap(automovil,j*70,(i+1)*70,0);
+                    if (i%2){
+                        al_draw_bitmap(automovil1,j*ITEM,(i+1)*ITEM,0);
+                    }
+                    else {
+                        al_draw_bitmap(automovil2,j*ITEM,(i+1)*ITEM,0);
+                    }
                     break;
                 case TRUCK:
-                    al_draw_bitmap(camion,j*70,(i+1)*70,0);
+                    al_draw_bitmap(camion,j*ITEM,(i+1)*ITEM,0);
                     if (j<(CANTCOLS-1)){
                         j++;
                     }
@@ -528,14 +530,15 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
                         ++contlogs;
                     }
                     switch (contlogs){
+                        case 1:
                         case 2:
-                            al_draw_bitmap(log2,j*70,(i+1)*70,0);
+                            al_draw_bitmap(log2,j*ITEM,(i+1)*ITEM,0);
                             break;
                         case 3:
-                            al_draw_bitmap(log3,j*70,(i+1)*70,0);
+                            al_draw_bitmap(log3,j*ITEM,(i+1)*ITEM,0);
                             break;
                         case 4:
-                            al_draw_bitmap(log4,j*70,(i+1)*70,0);
+                            al_draw_bitmap(log4,j*ITEM,(i+1)*ITEM,0);
                             break;
                     }
                     j+=contlogs;
@@ -545,10 +548,10 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     }
 
     if (rana->estado == VIVA){
-        al_draw_bitmap(ranita,rana->coords.x*70,(rana->coords.y+1)*70,0);
+        al_draw_bitmap(ranita,rana->coords.x*ITEM,(rana->coords.y+1)*ITEM,0);
     }
     else if (rana->estado == MUERTA){
-        al_draw_bitmap(ranamuerta,rana->coords.x*70,(rana->coords.y+1)*70,0);
+        al_draw_bitmap(ranamuerta,rana->coords.x*ITEM,(rana->coords.y+1)*ITEM,0);
     }
     for (i=0;i<rana->vidas;i++){
         al_draw_bitmap(lives,1075-i*50,5,0);
@@ -558,7 +561,8 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     al_rest(10);
     
     al_destroy_bitmap(background);
-    al_destroy_bitmap(automovil);
+    al_destroy_bitmap(automovil1);
+    al_destroy_bitmap(automovil2);
     al_destroy_bitmap(camion);
     al_destroy_bitmap(log2);
     al_destroy_bitmap(log3);
@@ -568,5 +572,4 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     al_destroy_font(font);
     fclose(topscores);
     return 0;
-
 }

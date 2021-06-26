@@ -1,6 +1,16 @@
-//CONSTANTES, TYPEDEFS, ENUMS GLOBALES
+/***************************************************************************//**
+  @file     +globalstuff.h+
+  @brief    +Constantes, typedefs y otras cosas pertinentes a todo el programa+
+  @author   +GRUPO 1+
+ ******************************************************************************/
 
-// INCLUDES
+#ifndef _GLOBALSTUFF_H_
+#define _GLOBALSTUFF_H_
+
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
+
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -9,7 +19,10 @@
 #include "joydrv.h"
 #include "termlib.h"
 
-//DEFINES 
+/*******************************************************************************
+ * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
+ ******************************************************************************/
+
 #define CANTFILS 16
 #define CANTCOLS 16
 #define VIVA 1
@@ -17,7 +30,10 @@
 #define ENCENDIDA 1
 #define APAGADA 0
 
-// STRUCTURES AND ENUMS
+/*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+
 typedef uint8_t action_t; //PLAY/PAUSE/UP/DOWN/LEFT/RIGHT/EXITGAME/EXITPROGRAM
 
 typedef uint8_t mundo_t[16][16];
@@ -35,7 +51,15 @@ typedef struct {
 enum player_action {NONE=0, PLAY, EXIT, UP, DOWN, LEFT, RIGHT, TOPSCORES}; //play-pause y exitgame-exitprgram se infiere por contexto
 enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD};
 
-// GLOBAL VARIABLES
+/*******************************************************************************
+ * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
+ ******************************************************************************/
+
+uint16_t puntajeactual = 0;
+char puntajestring [5] = "0000";
+
+// ESTO ESTA SOLO PARA PROBAR AHORA. DESPUES VUELA, no son variables globales
+
 rana_t frog = {.estado=VIVA,.coords.x=8,.coords.y=15,.encendida=APAGADA,.vidas=2,.nivel='1'};
 mundo_t world = {
     {DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD},
@@ -49,11 +73,11 @@ mundo_t world = {
     {SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE},
     {STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
     {STREET,TRUCK,TRUCK,STREET,STREET,STREET,STREET,TRUCK,TRUCK,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
-    {STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
+    {STREET,STREET,STREET,STREET,CAR,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
     {STREET,STREET,CAR,STREET,STREET,STREET,STREET,STREET,CAR,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
     {STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
     {STREET,STREET,STREET,STREET,CAR,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET,STREET},
     {SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE,SAFE}
 };
-uint16_t puntajeactual = 0;
-char puntajestring [5] = "0000";
+
+#endif // _GLOBALSTUFF_H_
