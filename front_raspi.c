@@ -94,14 +94,14 @@ static rpinr_t cero = {
 
 
 // MAIN TEST : EJEMPLO
-/*
+
 int main (void){
     init_raspi();
     output_topscores_raspi();
-    output_level_raspi(&frog);
+    output_world_raspi(&world,&frog);
     return 0;
 }
-*/
+
 
 /*******************************************************************************
  *******************************************************************************
@@ -156,7 +156,7 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
 }
 
 /********************************* OUTPUT WORLD **************************************/
-void output_world_raspi (mundo_t * mundo){  //muestra el mundo en un momento dado en el display
+void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en un momento dado en el display
     
     dcoord_t myPoint = {};
     int i,j;
@@ -166,6 +166,7 @@ void output_world_raspi (mundo_t * mundo){  //muestra el mundo en un momento dad
             switch ((*mundo)[i][j]){
                 case STREET:
                 case WATER:
+                case HOME:
                     disp_write(myPoint, D_OFF);
                     break;
                 case CAR:
@@ -176,6 +177,13 @@ void output_world_raspi (mundo_t * mundo){  //muestra el mundo en un momento dad
                     disp_write(myPoint, D_ON);
                     break;
             }
+        }
+    }
+    for (i=0;i<5;i++){
+        if(frog->llego[i]){
+            myPoint.x = (2+i*3);
+            myPoint.y = 1;
+            disp_write(myPoint,D_ON);        
         }
     }
     disp_update();

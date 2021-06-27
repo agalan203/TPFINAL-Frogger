@@ -11,7 +11,7 @@
 #include "frontall.h"
 
 // MAIN TEST : EJEMPLO
-/*
+
 int main(void) {
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -31,7 +31,7 @@ int main(void) {
 
     return 0;
 }
-*/
+
 
 /*******************************************************************************
  *******************************************************************************
@@ -415,6 +415,7 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     ALLEGRO_BITMAP * ranita = NULL;
     ALLEGRO_BITMAP * ranamuerta = NULL;
     ALLEGRO_BITMAP * lives = NULL;
+    ALLEGRO_BITMAP * llego = NULL;
 
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
 
@@ -495,6 +496,13 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
         return -1;
     }
 
+    llego = al_load_bitmap ("all_images/llego.png");
+    if(!llego)
+    {
+        fprintf(stderr, "failed to load lives bitmap!\n");
+        return -1;
+    }
+
     al_draw_bitmap(background,0,0,0);
 
     fgets(string,5,topscores);
@@ -557,6 +565,12 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
         al_draw_bitmap(lives,1075-i*50,5,0);
     }
 
+    for (i=0;i<5;i++){
+        if(rana->llego[i]){
+            al_draw_bitmap(llego,82+2*116*i,ITEM*2-10,0);
+        }
+    }
+
     al_flip_display();
     al_rest(10);
     
@@ -569,6 +583,8 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     al_destroy_bitmap(log4);
     al_destroy_bitmap(ranita);
     al_destroy_bitmap(ranamuerta);
+    al_destroy_bitmap(llego);
+    al_destroy_bitmap(lives);
     al_destroy_font(font);
     fclose(topscores);
     return 0;

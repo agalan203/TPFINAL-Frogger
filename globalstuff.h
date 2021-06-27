@@ -46,10 +46,11 @@ typedef struct {
     uint8_t encendida; //1 si esta encendida, 0 si esta apagada
     uint8_t vidas;
     uint8_t nivel;
+    uint8_t llego[5]; //0,1,2,3,4, dependiendo de a que casilla de llegada llego.
 } rana_t;
 
 enum player_action {NONE=0, PLAY, EXIT, UP, DOWN, LEFT, RIGHT, TOPSCORES}; //play-pause y exitgame-exitprgram se infiere por contexto
-enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD};
+enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, HOME};
 
 /*******************************************************************************
  * VARIABLE PROTOTYPES WITH GLOBAL SCOPE
@@ -60,10 +61,10 @@ char puntajestring [5] = "0000";
 
 // ESTO ESTA SOLO PARA PROBAR AHORA. DESPUES VUELA, no son variables globales
 
-rana_t frog = {.estado=VIVA,.coords.x=8,.coords.y=15,.encendida=APAGADA,.vidas=2,.nivel='1'};
+rana_t frog = {.estado=VIVA,.coords.x=8,.coords.y=15,.encendida=APAGADA,.vidas=2,.nivel='1',.llego={1,0,1,0,1}};
 mundo_t world = {
     {DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD,DEAD},
-    {DEAD,SAFE,SAFE,SAFE,DEAD,DEAD,SAFE,SAFE,DEAD,DEAD,SAFE,DEAD,DEAD,SAFE,SAFE,DEAD},
+    {DEAD,DEAD,HOME,DEAD,DEAD,HOME,DEAD,DEAD,HOME,DEAD,DEAD,HOME,DEAD,DEAD,HOME,DEAD},
     {WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER},
     {LOG,LOG,LOG,WATER,WATER,WATER,WATER,WATER,LOG,LOG,WATER,WATER,WATER,WATER,WATER,WATER},
     {WATER,WATER,WATER,WATER,LOG,LOG,LOG,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER,WATER},
