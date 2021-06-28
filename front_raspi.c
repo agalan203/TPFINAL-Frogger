@@ -16,6 +16,8 @@
 
 static dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
 static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
+static void cpytodisplay (mundo_t * mundo); //copia un 'mundo' en el display
+
 
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
@@ -135,16 +137,16 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
     }
     else if (joy_get_switch()== J_NOPRESS) {
 
-        if ( (myCoords.y < 64) && (myCoords.y > -64) && (myCoords.x > 64) ){
+        if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
             accion = RIGHT;
         }
-        else if ( (myCoords.y < 64) && (myCoords.y > -64) && (myCoords.x < -64) ){
+        else if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x < -THRESHOLD) ){
             accion = LEFT;
         }
-        else if ( (myCoords.x < 64) && (myCoords.x > -64) && (myCoords.y > 64) ){
+        else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y > THRESHOLD) ){
             accion = UP;
         }
-        else if ( (myCoords.x < 64) && (myCoords.x > -64) && (myCoords.y < -64) ){
+        else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y < -THRESHOLD) ){
             accion = DOWN;
         }
         else {
@@ -225,22 +227,11 @@ action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el displ
         {0,1,1,0,1,0,0,1,0,1,0,0,1,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
-    dcoord_t myPoint = {};
     action_t accion = NONE;
     dcoord_t click = {0,0};
-    int i,j, repeat=0;
+    int repeat=0;
 
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (gamepausedrpi[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (gamepausedrpi[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&gamepausedrpi);
 
     do{
         click = get_disp_coord (&gamepausedrpi);
@@ -281,22 +272,11 @@ action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
         {1,0,0,0,1,0,0,1,1,0,1,0,0,0,0,1},
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1}
     };
-    dcoord_t myPoint = {};
     action_t accion = NONE;
     dcoord_t click = {0,0};
-    int i,j,repeat=0;
+    int repeat=0;
 
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (initmenurpi[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (initmenurpi[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&initmenurpi);
     
     do{
         click = get_disp_coord (&initmenurpi);
@@ -340,20 +320,8 @@ void output_dead_raspi (void){
         {0,0,0,1,1,0,0,1,0,0,1,1,1,0,0,0},
         {0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0}
     };
-    dcoord_t myPoint = {};
-    int i,j;
 
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (deadfrog[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (deadfrog[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&deadfrog);
 }
 
 /********************************* GAME OVER **************************************/
@@ -394,69 +362,48 @@ void output_gameover_raspi (void){
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
+    int j=0;
 
-    dcoord_t myPoint = {};
-    int i,j;
-
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (gameover[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (gameover[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&gameover);
 
     //AHI VA UNA FUNCION PARA PERDER UN TOQUE DE TIEMPO
 
     for (j=0;j<4;j++){
         switch (puntajestring[j]){
             case '0':
-                cpytoworld(&blanco,&cero,6*i,4*j);
+                cpytoworld(&blanco,&cero,5,4*j);
                 break;
             case '1':
-                cpytoworld(&blanco,&uno,6*i,4*j);
+                cpytoworld(&blanco,&uno,5,4*j);
                 break;
             case '2':
-                cpytoworld(&blanco,&dos,6*i,4*j);
+                cpytoworld(&blanco,&dos,5,4*j);
                 break;
             case '3':
-                cpytoworld(&blanco,&tres,6*i,4*j);
+                cpytoworld(&blanco,&tres,5,4*j);
                 break;
             case '4':
-                cpytoworld(&blanco,&cuatro,6*i,4*j);
+                cpytoworld(&blanco,&cuatro,5,4*j);
                 break;
             case '5':
-                cpytoworld(&blanco,&cinco,6*i,4*j);
+                cpytoworld(&blanco,&cinco,5,4*j);
                 break;
             case '6':
-                cpytoworld(&blanco,&seis,6*i,4*j);
+                cpytoworld(&blanco,&seis,5,4*j);
                 break;
             case '7':
-                cpytoworld(&blanco,&siete,6*i,4*j);
+                cpytoworld(&blanco,&siete,5,4*j);
                 break;
             case '8':
-                cpytoworld(&blanco,&ocho,6*i,4*j);
+                cpytoworld(&blanco,&ocho,5,4*j);
                 break;
             case '9':
-                cpytoworld(&blanco,&nueve,6*i,4*j);
+                cpytoworld(&blanco,&nueve,5,4*j);
                 break;
         }
     }
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (blanco[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (blanco[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+
+    cpytodisplay(&blanco);
 }
 
 /********************************* OUTPUT TOP SCORES RASPI **************************************/
@@ -483,7 +430,6 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
     int i,j,repeat=0;
     char string[5];
     action_t accion = NONE;
-    dcoord_t myPoint = {};
 
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
@@ -528,17 +474,7 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
         }
     }
 
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (scores[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (scores[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&scores);
 
     do{
         accion = get_input_raspi();
@@ -591,17 +527,8 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
             }
         }
 
-        for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-            for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-                if (scores[i][j]==0){
-                    disp_write(myPoint, D_OFF);
-                } 
-                else if (scores[i][j]==1){
-                    disp_write(myPoint, D_ON);
-                }
-            }
-        }
-        disp_update();
+        cpytodisplay(&scores);
+
         repeat = 0;
         do{
             accion = get_input_raspi();
@@ -637,8 +564,6 @@ mundo_t level = {
         {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
-    dcoord_t myPoint = {};
-    int i,j;
 
     switch (rana->nivel){
         case '1':
@@ -670,17 +595,7 @@ mundo_t level = {
     }
 
     
-    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
-        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
-            if (level[i][j]==0){
-                disp_write(myPoint, D_OFF);
-            } 
-            else if (level[i][j]==1){
-                disp_write(myPoint, D_ON);
-            }
-        }
-    }
-    disp_update();
+    cpytodisplay(&level);
 }
 
 /*******************************************************************************
@@ -746,4 +661,22 @@ static dcoord_t get_disp_coord (mundo_t * disp){
 	} while( joy_get_switch() == J_NOPRESS );	//termina si se presiona el switch
 
     return npos;
+}
+
+/********************************* COPY MAP TO DISPLAY **************************************/
+static void cpytodisplay (mundo_t * mundo){
+    dcoord_t myPoint = {};
+    int i,j;
+
+    for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
+        for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
+            if ((*mundo)[i][j]==0){
+                disp_write(myPoint, D_OFF);
+            } 
+            else if ((*mundo)[i][j]==1){
+                disp_write(myPoint, D_ON);
+            }
+        }
+    }
+    disp_update();
 }
