@@ -47,8 +47,8 @@ typedef struct{
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 /**
- * @brief: Modifica la posicion de la rana dentro del mapa. Si la rana intenta salir
- * 		del mapa, se mantiene la posicion previa, evitando desborde del jugador.
+ * @brief: Modifica la posicion de la rana dentro del mapa. Si la rana intenta salir del
+ * 		mapa, se indica el campo desborde con DESBR.
  * 		Si la rana se encuentra fuera del mapa, lo indica en el campo desborde, 
  * 		actualizandolo a DESBR. 
  * @param: param1 mov: direccion hacia donde se tiene que mover. 

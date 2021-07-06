@@ -38,30 +38,44 @@ rana_be_t * rana_frogger(char mov){
 			if(rana_frg.pos_x<(CANTCOLS-1)){/*si no hay posible desborde*/
 				rana_frg.pos_x++;   /*muevo rana hacia la derecha*/
 			}
+			else{
+				rana_frg.desborde=DESBR;
+			}
+
 			break;
 		case 'l':	
 			if(rana_frg.pos_x>0){	  /*si no hay posible desborde*/	
 				rana_frg.pos_x--; /*muevo rana hacia la izquierda*/
+			}
+			else{
+				rana_frg.desborde=DESBR;
 			}
 			break;
 		case 'u':	
 			if(rana_frg.pos_y<(CANTFILS-1)){ /*si no hay posible desborde*/
 				rana_frg.pos_y++;        /*muevo rana hacia arriba*/
 			}
+			else{
+				rana_frg.desborde=DESBR;
+			}
 			break;
 		case 'd':	
 			if(rana_frg.pos_y>0){	  /*si no hay posible desborde*/
 				rana_frg.pos_y--; /*muevo rana hacia abajo*/
+			} 
+			else{
+				rana_frg.desborde=DESBR;
 			}
+
 			break;
 		case '0':
 			/*jugador aun no mueve rana*/
 			break;
 	}
-	if(rana_frg.pos_y>=(CANTFILS-1)|| rana_frg.pos_y<0){
+	if(rana_frg.pos_y>(CANTFILS-1)|| rana_frg.pos_y<0){
 		rana_frg.desborde=DESBR;
 	}
-	else if(rana_frg.pos_x>=(CANTCOLS-1) || rana_frg.pos_x<0){
+	else if(rana_frg.pos_x>(CANTCOLS-1) || rana_frg.pos_x<0){
 		rana_frg.desborde=DESBR;
 	}
 
