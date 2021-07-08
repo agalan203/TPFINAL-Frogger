@@ -11,7 +11,7 @@
 #include "frontall.h"
 
 // MAIN TEST : EJEMPLO
-
+/*
 int main(void) {
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -31,7 +31,7 @@ int main(void) {
 
     return 0;
 }
-
+*/
 
 /*******************************************************************************
  *******************************************************************************
@@ -166,9 +166,11 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     FILE * topscores;
     char string[5];
 
+    //crea lo que usa
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
+        al_destroy_font(font);
         return -1;
     }
 
@@ -176,10 +178,13 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(background,0,0,0);
 
+    //imprime el high score y las instrucciones 
     fgets(string,5,topscores);
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
@@ -189,6 +194,7 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
 
     al_flip_display();
 
+    //espera a que se introduzca una operacion valida
     do{
         accion = get_input_all(event_queue,ev);
         switch (accion){
@@ -203,6 +209,7 @@ action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
         }
     } while (exit == false);
 
+    //destruye los recursos utilizados
     al_destroy_bitmap(background);
     al_destroy_font(font);
     fclose(topscores);
@@ -220,9 +227,11 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     FILE * topscores;
     char string[5];
 
+    //crea lo que usa
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
+        al_destroy_font(font);
         return -1;
     }
 
@@ -230,6 +239,8 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(background,0,0,0);
@@ -238,10 +249,14 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
     if(!pause)
     {
         fprintf(stderr, "failed to load pause bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(pause,WIDTH/2-55,490,0);
 
+    //imprime el high score y las instrucciones 
     fgets(string,5,topscores);
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
@@ -251,6 +266,7 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
 
     al_flip_display();
 
+    //espera a que se introduzca una operacion valida
     do{
         accion = get_input_all(event_queue,ev);
         switch (accion){
@@ -264,6 +280,7 @@ action_t output_gamepaused_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT
         }
     } while (exit == false);
 
+    //destruye los recursos utilizados
     al_destroy_bitmap(background);
     al_destroy_bitmap(pause);
     al_destroy_font(font);
@@ -282,9 +299,11 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     action_t accion = NONE;
     int exit = false;
 
+    //crea lo que usa
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
+        al_destroy_font(font);
         return -1;
     }
 
@@ -292,6 +311,8 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(background,0,0,0);
@@ -300,10 +321,14 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     if(!square)
     {
         fprintf(stderr, "failed to load square bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(square,WIDTH/4,300,0);
 
+    //imprime el high score y las instrucciones 
     fgets(string,5,topscores);
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
@@ -314,6 +339,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
 
     al_flip_display();
 
+    //espera a que se introduzca una operacion valida
     do{
         accion = get_input_all(event_queue,ev);
         switch (accion){
@@ -327,6 +353,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
         }
     } while (exit == false);
 
+    //destruye los recursos utilizados
     al_destroy_bitmap(background);
     al_destroy_bitmap(square);
     al_destroy_font(font);
@@ -347,9 +374,11 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
     int i;
     char string[5];
 
+    //crea lo que usa
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
+        al_destroy_font(font);
         return -1;
     }
 
@@ -357,6 +386,8 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(background,0,0,0);
@@ -365,10 +396,14 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
     if(!square)
     {
         fprintf(stderr, "failed to load square bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
     al_draw_bitmap(square,WIDTH/4,300,0);
 
+    //imprime los top scores y las instrucciones 
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,370,ALLEGRO_ALIGN_CENTRE,"TOP SCORES");
     for (i=0;i<4;i++){
         fgets(string,5,topscores);
@@ -378,6 +413,7 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
 
     al_flip_display();
 
+    //espera a que se introduzca una operacion valida
     do{
         accion = get_input_all(event_queue,ev);
         switch (accion){
@@ -390,6 +426,7 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
         }
     } while (exit == false);
 
+    //destruye los recursos utilizados
     al_destroy_bitmap(background);
     al_destroy_bitmap(square);
     al_destroy_font(font);
@@ -423,6 +460,7 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
+        al_destroy_font(font);
         return -1;
     }
 
@@ -430,13 +468,18 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!background)
     {
         fprintf(stderr, "failed to load background bitmap!\n");
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
-    automovil1 = al_load_bitmap ("all_images/car1.png");
+    automovil1 = al_load_bitmap ("all_images/car3.png");
     if(!automovil1)
     {
         fprintf(stderr, "failed to load automovil1 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -444,6 +487,10 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!automovil2)
     {
         fprintf(stderr, "failed to load automovil2 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -451,6 +498,11 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!camion)
     {
         fprintf(stderr, "failed to load truck bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -458,6 +510,12 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!log2)
     {
         fprintf(stderr, "failed to load log2 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -465,6 +523,13 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!log3)
     {
         fprintf(stderr, "failed to load log3 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -472,6 +537,14 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!log4)
     {
         fprintf(stderr, "failed to load log4 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -479,6 +552,15 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!ranita)
     {
         fprintf(stderr, "failed to load ranita bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -486,6 +568,16 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!ranamuerta)
     {
         fprintf(stderr, "failed to load ranamuerta bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -493,6 +585,17 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!lives)
     {
         fprintf(stderr, "failed to load lives bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        al_destroy_bitmap(ranamuerta);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
@@ -500,16 +603,30 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     if(!llego)
     {
         fprintf(stderr, "failed to load lives bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        al_destroy_bitmap(ranamuerta);
+        al_destroy_bitmap(lives);
+        al_destroy_font(font);
+        fclose(topscores);
         return -1;
     }
 
     al_draw_bitmap(background,0,0,0);
 
+    //muestra el highscore y el nivel y el puntaje actual
     fgets(string,5,topscores);
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
     al_draw_textf(font,al_map_rgb(235, 238, 242),20,45,0,"%s",puntajestring);
     al_draw_textf(font,al_map_rgb(235, 238, 242),980,45,0,"LEVEL %c",rana->nivel);
     
+    //muestra los elementos del mundo donde estan
     for (i=0; i<CANTFILS; i++){
         for (j=0; j<CANTCOLS; j++){
             switch ((*mundo)[i][j]){
@@ -555,16 +672,20 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
         }
     }
 
+    //muestra la rana
     if (rana->estado == VIVA){
         al_draw_bitmap(ranita,rana->coords.x*ITEM,(rana->coords.y+1)*ITEM,0);
     }
     else if (rana->estado == MUERTA){
         al_draw_bitmap(ranamuerta,rana->coords.x*ITEM,(rana->coords.y+1)*ITEM,0);
     }
+
+    //muestra la cantidad de vidas de la rana
     for (i=0;i<rana->vidas;i++){
         al_draw_bitmap(lives,1075-i*50,5,0);
     }
 
+    //muestra los casilleros a donde ya llego la rana
     for (i=0;i<5;i++){
         if(rana->llego[i]){
             al_draw_bitmap(llego,82+2*116*i,ITEM*2-10,0);
@@ -572,7 +693,6 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     }
 
     al_flip_display();
-    al_rest(10);
     
     al_destroy_bitmap(background);
     al_destroy_bitmap(automovil1);

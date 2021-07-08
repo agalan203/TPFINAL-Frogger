@@ -15,6 +15,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <time.h>
 #include "disdrv.h"
 #include "joydrv.h"
 #include "termlib.h"
