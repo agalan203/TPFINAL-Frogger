@@ -2,6 +2,7 @@
 
 static mapa_t mapa;
 
+//inicializacion de las estructuras de cada carril (no se inicializaron todos los campos)
 static carril_t tronco2 = {0, 0, 1, 1, 2, LOG};
 static carril_t tronco3 = {0, 0, 1, 1, 3, LOG};
 static carril_t tronco4 = {0, 0, 1, 1, 4, LOG};
@@ -66,7 +67,7 @@ void inicia_mapa(u_int8_t nivel){ //se crean todos los objetos de un nivel, se m
     }
 }
 
-static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculos[6], u_int8_t nivel){
+static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculos[6], u_int8_t nivel){ //se crea cada objeto con sus atributos correspondientes
     int i;
     srand(time(NULL));
     switch(nivel){
@@ -109,12 +110,12 @@ static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculo
         (arr_troncos[i] -> tiempo_previo) = clock();
     }
 
-    convertir_velocidad(arr_vehiculos);
-    convertir_velocidad(arr_troncos);
+    convertir_velocidad(arr_vehiculos); //se convierte las velocidades 1, 2, 3, 4, 5
+    convertir_velocidad(arr_troncos);   //a los valores constantes definidos 
 
 }
 
-static void convertir_velocidad(carril_t* arr[6]){
+static void convertir_velocidad(carril_t* arr[6]){ //"traduce" los valores enteros que se asignaron aleatoriamente a los valores constates definidos
     int i;
     for(i = 0; i < 6; i++){
     switch(arr[i] -> velocidad){
@@ -138,15 +139,16 @@ static void convertir_velocidad(carril_t* arr[6]){
     }
 }
 
-static void crear_vehiculos(carril_t* arr_vehiculos[6], int cant_vel){ //recibe la cantidad de velocidades a la que se mueven los vehiculos dependiendo del nivel 
+static void crear_vehiculos(carril_t* arr_vehiculos[6], int cant_vel){ //recibe la cantidad de velocidades a la que se mueven los vehiculos dependiendo del nivel y el arreglo de vehiculos
     int i, j;
     int espacio_libre = 0;
     for(i = 0; i < 6; i++){
         arr_vehiculos[i] -> direccion = rand() % 2; //la direccion es 0 o 1            
-        arr_vehiculos[i] -> velocidad = rand() % cant_vel + 1; 
-        arr_vehiculos[i] -> cant_obj = (arr_vehiculos[i] -> size_obj == 1) ? rand() % 3 + 2: rand() % 3 + 1;
-        espacio_libre = (arr_vehiculos[i] -> size_obj == 1) ? rand() % 3 + 1 : rand() % 3 + 3;
-        if(arr_vehiculos[i] -> direccion == IZQ_A_DER){
+        arr_vehiculos[i] -> velocidad = rand() % cant_vel + 1; //asigna velocidades random dependiendo de la cantidad que correspondan para el nivel
+        arr_vehiculos[i] -> cant_obj = (arr_vehiculos[i] -> size_obj == 1) ? rand() % 3 + 2: rand() % 3 + 1; //asigna la cantidad de elementos que pueden aparecer
+                                                                                                             //depende del tamaño del vehiculo (auto/camion)
+        espacio_libre = (arr_vehiculos[i] -> size_obj == 1) ? rand() % 3 + 1 : rand() % 3 + 3; //define el espacio libre que puede haber entre los vehiculos
+        if(arr_vehiculos[i] -> direccion == IZQ_A_DER){ //se crean los vehiculos dependiendo del sentido, cantidad y tamaño asignados para cada carril 
             arr_vehiculos[i] -> pos_inic_objetos[j] = espacio_libre - 1;
             for(j = 1; j < arr_vehiculos[i] -> cant_obj; j++){
                 arr_vehiculos[i] -> pos_inic_objetos[j] = arr_vehiculos[i] -> pos_inic_objetos[j-1] - espacio_libre - 1 - rand() % 2;
@@ -161,14 +163,14 @@ static void crear_vehiculos(carril_t* arr_vehiculos[6], int cant_vel){ //recibe 
     }
 }
 
-static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){
+static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la cantidad de velocidades a la que se mueven los troncos dependiendo del nivel y el arreglo de troncos
     int i,j;
     int espacio_libre = 0;
     for(i = 0; i < 6; i++){
         arr_troncos[i] -> direccion = rand() % 2; //la direccion es 0 o 1       
         arr_troncos[i] -> size_obj = rand() % 3 + 2; //los troncos pueden ser de 2, 3 o 4 cuadritos
         arr_troncos[i] -> velocidad = rand() % cant_vel + 1;
-        switch(arr_troncos[i] -> size_obj){
+        switch(arr_troncos[i] -> size_obj){ //define el espacio libre que puede haber entre los troncos dependiendo del size de los mismos
             case 4:
                 arr_troncos[i] -> cant_obj = rand() % 2 + 1;
                 espacio_libre = (arr_troncos[i] -> cant_obj == 2) ? 3 : 0;
@@ -183,7 +185,7 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){
                 break;
         }
 
-        if(arr_troncos[i] -> direccion == IZQ_A_DER){
+        if(arr_troncos[i] -> direccion == IZQ_A_DER){ //funcionamiento analogo a crear_vehiculos
             arr_troncos[i] -> pos_inic_objetos[j] = espacio_libre - 1;
             for(j = 1; j < arr_troncos[i] -> cant_obj; j++){
                 arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] - espacio_libre - arr_troncos[i] -> size_obj - rand() % 2;
@@ -199,7 +201,7 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){
     }
 }
 
-mapa_t* actualiza_mundo(void){
+mapa_t* actualiza_mundo(void){ actualiza el mapa constantemente
     int i;
     carril_t* carriles[12] = {
         &tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,
@@ -207,27 +209,27 @@ mapa_t* actualiza_mundo(void){
     };
     
     for(i = 0; i < 12; i++){
-        actualiza_linea(carriles[i]);
+        actualiza_linea(carriles[i]); //actualiza linea por linea
     }
 
     return &mapa;
 }
 
-static void actualiza_linea(carril_t* linea){
+static void actualiza_linea(carril_t* linea){ //actualiza cada carril por saparado segun la velocidad de los objetos
     int i;
     if(((clock() - (linea -> tiempo_previo))/(double)CLOCKS_PER_SEC) >= linea -> velocidad){
         linea -> tiempo_previo = clock();
         for(i = 0; i < linea -> cant_obj; i++){
             linea -> pos_inic_objetos[i] += (linea -> direccion == IZQ_A_DER) ? 1 : -1;
         }        
-        carga_mapa(linea);
+        carga_mapa(linea); //carga el mapa actualizado
     }
 }
 
-static void carga_mapa(carril_t* linea){
+static void carga_mapa(carril_t* linea){ //carga el mapa despues de cada actualizacion 
     int i, j;
     u_int8_t columna;
-    if(linea -> direccion == IZQ_A_DER){
+    if(linea -> direccion == IZQ_A_DER){ //chequeo sentido y le asigno posicion por posicion el valor que corresponda 
         for(i = 0; i < linea -> cant_obj; i++){
             if(linea -> pos_inic_objetos[i] >= 0 && linea -> pos_inic_objetos[i] < SIZE){
                 for(j = 0; j < linea -> size_obj; j++){
