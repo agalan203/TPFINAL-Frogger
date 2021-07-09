@@ -32,9 +32,8 @@ void creacion_mapa(void){ //crea el mapa pero sin ningun vehiculo, mapa base
         mapa[1][i] = DEAD;
     } 
 
-    for(i = 1; i < SIZE; i= i+4){
+    for(i = 2; i <= 14; i= i+3){
         mapa[1][i] = WIN;
-        mapa[1][i+1] = WIN;
     }
 
     for(i = 2; i <= 7; i++){  
