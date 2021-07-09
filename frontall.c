@@ -436,27 +436,16 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
 }
 
 /********************************* OUTPUT WORLD ALLEGRO **************************************/
-int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un momento dado en el display
+int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * background, ALLEGRO_BITMAP * automovil1, ALLEGRO_BITMAP * automovil2, ALLEGRO_BITMAP * camion, ALLEGRO_BITMAP * log2, ALLEGRO_BITMAP * log3, ALLEGRO_BITMAP * log4, ALLEGRO_BITMAP * ranita, ALLEGRO_BITMAP * ranamuerta, ALLEGRO_BITMAP * lives, ALLEGRO_BITMAP * llego){  //muestra el mundo en un momento dado en el display
     FILE * topscores;
     char string[5];
     int i,j;
     int contlogs;
-    //IMAGENES
-    ALLEGRO_BITMAP * background = NULL;
-    ALLEGRO_BITMAP * automovil1 = NULL;
-    ALLEGRO_BITMAP * automovil2 = NULL;
-    ALLEGRO_BITMAP * camion = NULL;
-    ALLEGRO_BITMAP * log2 = NULL;
-    ALLEGRO_BITMAP * log3 = NULL;
-    ALLEGRO_BITMAP * log4 = NULL;
-    ALLEGRO_BITMAP * ranita = NULL;
-    ALLEGRO_BITMAP * ranamuerta = NULL;
-    ALLEGRO_BITMAP * lives = NULL;
-    ALLEGRO_BITMAP * llego = NULL;
 
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
 
     //inicializa todo lo requerido
+    /* copiar esto en MAIN
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
@@ -617,6 +606,7 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
         fclose(topscores);
         return -1;
     }
+    HASTA ACA COPIAR EN MAIN */
 
     al_draw_bitmap(background,0,0,0);
 
@@ -694,6 +684,7 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
 
     al_flip_display();
     
+    /* ESTO COPIAR AL FINAL DE MAIN
     al_destroy_bitmap(background);
     al_destroy_bitmap(automovil1);
     al_destroy_bitmap(automovil2);
@@ -705,6 +696,8 @@ int output_world_all (rana_t * rana, mundo_t * mundo){  //muestra el mundo en un
     al_destroy_bitmap(ranamuerta);
     al_destroy_bitmap(llego);
     al_destroy_bitmap(lives);
+    HASTA ACA COPIAR EN MAIN */
+    
     al_destroy_font(font);
     fclose(topscores);
     return 0;
