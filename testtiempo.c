@@ -1,31 +1,27 @@
 #include <time.h>
 #include <stdio.h>
 
-void delay_falso(double);
+#define CANT_SEG_LED 1
 
 int main(void){
+    clock_t comienzo;
+    int fin = 1;
+    comienzo=clock();
+    int led_state = 0;
+    while(1){
+        fin = 1;
+        led_state = (led_state == 0) ? 1 : 0;
+        printf("LED: %d\n", led_state);
 
-    printf("Hola Mundo!\n");
+        while(fin){
+            if( (((clock()-comienzo)/(double)CLOCKS_PER_SEC)) >= CANT_SEG_LED ){
+                comienzo = clock();
+                fin--;
+            }
+        }
 
-    delay_falso(5); //espera cinco segundos
-
-    printf("Chau Mundo!\n");
+    }
 
     return 0;
 }
 
-/****************************************************************/
-//                         delay_falso                          //
-//     recibe la cantidad de segundos que tiene que esperar     //
-/****************************************************************/
-
-void delay_falso(double cant_seg){
-    clock_t comienzo;
-    int fin = 1;
-    comienzo=clock();
-    while(fin){
-        if( (((clock()-comienzo)/(double)CLOCKS_PER_SEC)) >= cant_seg ){
-            fin--;
-        }
-    }
-}
