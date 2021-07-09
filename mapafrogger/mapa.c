@@ -32,9 +32,8 @@ void creacion_mapa(void){ //crea el mapa pero sin ningun vehiculo, mapa base
         mapa[1][i] = DEAD;
     } 
 
-    for(i = 1; i < SIZE; i= i+4){
+    for(i = 2; i <= 14; i= i+3){
         mapa[1][i] = WIN;
-        mapa[1][i+1] = WIN;
     }
 
     for(i = 2; i <= 7; i++){  
@@ -201,7 +200,7 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
     }
 }
 
-mapa_t* actualiza_mundo(void){ actualiza el mapa constantemente
+mapa_t* actualiza_mundo(void){ //actualiza el mapa constantemente
     int i;
     carril_t* carriles[12] = {
         &tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,
