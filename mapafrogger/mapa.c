@@ -201,7 +201,7 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
     }
 }
 
-mapa_t* actualiza_mundo(void){ actualiza el mapa constantemente
+mapa_t* actualiza_mundo(void){ //actualiza el mapa constantemente
     int i;
     carril_t* carriles[12] = {
         &tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,

@@ -17,7 +17,7 @@
 //                     constante para los lados del mapa                     //
 /*****************************************************************************/
 #define SIZE 16 //constante para los lados del mapa
-
+#define MAX_ELEM 4
 /*****************************************************************************/
 //                constantes para los sentidos de los carriles               //
 /*****************************************************************************/
