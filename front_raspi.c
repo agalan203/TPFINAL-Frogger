@@ -17,12 +17,14 @@
 static dcoord_t get_disp_coord (mundo_t * disp);   //trae la coordenada del display donde esta el jugador
 static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); //copia un nro en el display
 static void cpytodisplay (mundo_t * mundo); //copia un 'mundo' en el display
+void delay_falso(double); //delay no bloqueante de una cantidad de segundos que recibe
 
 
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
 
+//Numeros para imprimir en el display de la raspi
 static rpinr_t uno = {
     {0,1,0},
     {1,1,0},
@@ -96,14 +98,14 @@ static rpinr_t cero = {
 
 
 // MAIN TEST : EJEMPLO
-
+/*
 int main (void){
     init_raspi();
     output_topscores_raspi();
     output_world_raspi(&world,&frog);
     return 0;
 }
-
+*/
 
 /*******************************************************************************
  *******************************************************************************
@@ -135,7 +137,7 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
     if (joy_get_switch()== J_PRESS) {
         accion = PLAY;
     }
-    else if (joy_get_switch()== J_NOPRESS) {
+    else if (joy_get_switch()== J_NOPRESS) {    //solo se tienen en cuenta las acciones si el joystick pasa una pos dada
 
         if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
             accion = RIGHT;
@@ -163,6 +165,7 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
     dcoord_t myPoint = {};
     int i,j;
 
+    //imprime los distintos elementos
     for (i=0, myPoint.y = DISP_MIN ; i<CANTFILS; i++, myPoint.y++){
         for (j=0, myPoint.x = DISP_MIN ; j<CANTCOLS; j++, myPoint.x++){
             switch ((*mundo)[i][j]){
@@ -181,6 +184,7 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
             }
         }
     }
+    //imprime como casillas bloqueadas si la rana llego a la llegada
     for (i=0;i<5;i++){
         if(frog->llego[i]){
             myPoint.x = (2+i*3);
@@ -233,6 +237,7 @@ action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el displ
 
     cpytodisplay(&gamepausedrpi);
 
+    //espera a que se introduzca una de las acciones validas
     do{
         click = get_disp_coord (&gamepausedrpi);
         if ((click.x >= 3) && (click.x <= 5) && (click.y >= 6) && (click.y <= 8)){
@@ -278,6 +283,7 @@ action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
 
     cpytodisplay(&initmenurpi);
     
+    //espera a que se introduzca una de las acciones validas
     do{
         click = get_disp_coord (&initmenurpi);
         if ((click.x >= 4) && (click.x <= 6) && (click.y >= 8) && (click.y <= 10)){
@@ -366,8 +372,9 @@ void output_gameover_raspi (void){
 
     cpytodisplay(&gameover);
 
-    //AHI VA UNA FUNCION PARA PERDER UN TOQUE DE TIEMPO
+    delay_falso(3.0);
 
+    //Imprime el puntaje obtenido en el display
     for (j=0;j<4;j++){
         switch (puntajestring[j]){
             case '0':
@@ -431,11 +438,13 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
     char string[5];
     action_t accion = NONE;
 
+    //abre el archivo top scores
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
     }
 
+    //copia los primeros 2 top scores en el display
     for (i=0;i<2;i++){
         fgets(string,5,topscores);
         for (j=0;j<4;j++){
@@ -476,6 +485,7 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
 
     cpytodisplay(&scores);
 
+    //espera a que se pidan los siguientes dos top scores o salir
     do{
         accion = get_input_raspi();
         switch (accion){
@@ -488,6 +498,7 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
         }
     } while (repeat == 0);
 
+    //copia los segundos dos top scores en el display
     if (accion == RIGHT){
         for (i=0;i<2;i++){
             fgets(string,5,topscores);
@@ -528,7 +539,7 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
         }
 
         cpytodisplay(&scores);
-
+        //espera a que se pida exit
         repeat = 0;
         do{
             accion = get_input_raspi();
@@ -565,6 +576,7 @@ mundo_t level = {
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
     };
 
+    //muestra el numero del nivel por display
     switch (rana->nivel){
         case '1':
             cpytoworld(&level,&uno,2,10);
@@ -582,6 +594,8 @@ mundo_t level = {
             cpytoworld(&level,&cinco,2,10);
             break;
     }
+
+    //muestra la cantidad de vidas
     switch (rana->vidas){
         case 1:
             cpytoworld(&level,&uno,9,4);
@@ -593,7 +607,6 @@ mundo_t level = {
             cpytoworld(&level,&tres,9,4);
             break;
     }
-
     
     cpytodisplay(&level);
 }
@@ -605,6 +618,8 @@ mundo_t level = {
  ******************************************************************************/
 
 /********************************* COPY NR TO WORLD **************************************/
+
+//copia un numero en una pos dada del display
 static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ){
     int i,j;
     for (i=0;i<5;i++){
@@ -664,7 +679,7 @@ static dcoord_t get_disp_coord (mundo_t * disp){
 }
 
 /********************************* COPY MAP TO DISPLAY **************************************/
-static void cpytodisplay (mundo_t * mundo){
+static void cpytodisplay (mundo_t * mundo){ //copia una matriz de 16x16 en el buffer del display y la muestra
     dcoord_t myPoint = {};
     int i,j;
 
@@ -679,4 +694,19 @@ static void cpytodisplay (mundo_t * mundo){
         }
     }
     disp_update();
+}
+/****************************************************************/
+//                         delay_falso                          //
+//     recibe la cantidad de segundos que tiene que esperar     //
+/****************************************************************/
+
+void delay_falso(double cant_seg){
+    clock_t comienzo;
+    int fin = 1;
+    comienzo=clock();
+    while(fin){
+        if( (((clock()-comienzo)/(double)CLOCKS_PER_SEC)) >= cant_seg ){
+            fin--;
+        }
+    }
 }
