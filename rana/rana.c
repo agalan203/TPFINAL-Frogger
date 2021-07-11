@@ -30,59 +30,50 @@ void rana_init(uint8_t posx_in,uint8_t posy_in,uint8_t vidas_in,uint8_t llegadas
 	rana_frg.pos_y=posy_in;
 	rana_frg.vidas=vidas_in;
 	rana_frg.llegadas=llegadas_in;
+	rana_frg.tiempo=clock();
+	rana_frg.timeout=0;
+	rana_frg.on_off=0;
 }
 
-rana_be_t * rana_frogger(char mov){
+rana_be_t * rana_frogger(char mov,uint8_t tiempo_max){
 	switch(mov){
 		case 'r':
 			if(rana_frg.pos_x<(CANTCOLS-1)){/*si no hay posible desborde*/
 				rana_frg.pos_x++;   /*muevo rana hacia la derecha*/
 			}
-			else{
-				rana_frg.desborde=DESBR;
-			}
-
 			break;
 		case 'l':	
 			if(rana_frg.pos_x>0){	  /*si no hay posible desborde*/	
 				rana_frg.pos_x--; /*muevo rana hacia la izquierda*/
 			}
-			else{
-				rana_frg.desborde=DESBR;
-			}
 			break;
-		case 'u':	
+		case 'd':	
 			if(rana_frg.pos_y<(CANTFILS-1)){ /*si no hay posible desborde*/
 				rana_frg.pos_y++;        /*muevo rana hacia arriba*/
 			}
-			else{
-				rana_frg.desborde=DESBR;
-			}
 			break;
-		case 'd':	
+		case 'u':	
 			if(rana_frg.pos_y>0){	  /*si no hay posible desborde*/
 				rana_frg.pos_y--; /*muevo rana hacia abajo*/
-			} 
-			else{
-				rana_frg.desborde=DESBR;
 			}
-
 			break;
 		case '0':
 			/*jugador aun no mueve rana*/
 			break;
 	}
-	if(rana_frg.pos_y>(CANTFILS-1)|| rana_frg.pos_y<0){
-		rana_frg.desborde=DESBR;
+	if((clock()-rana_frg.tiempo)/(double)CLOCKS_PER_SEC >= tiempo_max){
+		rana_frg.timeout=1;
 	}
-	else if(rana_frg.pos_x>(CANTCOLS-1) || rana_frg.pos_x<0){
-		rana_frg.desborde=DESBR;
+	if((clock()-rana_frg.tiempo)/(double)CLOCKS_PER_SEC >= TITILE){
+		rana_frg.on_off=(rana_frg.on_off==0)?1:0;
+			
 	}
-
 	return &rana_frg;
 }
 
-
+rana_be_t * get_rana(void){
+	return &rana_frg;
+}
 
 
 
