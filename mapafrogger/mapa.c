@@ -66,6 +66,18 @@ void inicia_mapa(u_int8_t nivel){ //se crean todos los objetos de un nivel, se m
     }
 }
 
+carril_t * get_carril(uint8_t linea){
+	 carril_t* carriles[12] = {
+		&tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,
+		&vehiculo9, &vehiculo10, &vehiculo11, &vehiculo12, &vehiculo13, &vehiculo14
+	 };
+	 return carriles[linea];
+}
+
+mapa_t * get_mapa(void){
+	return &mapa;
+}
+
 static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculos[6], u_int8_t nivel){ //se crea cada objeto con sus atributos correspondientes
     int i;
     srand(time(NULL));
@@ -148,13 +160,13 @@ static void crear_vehiculos(carril_t* arr_vehiculos[6], int cant_vel){ //recibe 
                                                                                                              //depende del tamaño del vehiculo (auto/camion)
         espacio_libre = (arr_vehiculos[i] -> size_obj == 1) ? rand() % 3 + 1 : rand() % 3 + 3; //define el espacio libre que puede haber entre los vehiculos
         if(arr_vehiculos[i] -> direccion == IZQ_A_DER){ //se crean los vehiculos dependiendo del sentido, cantidad y tamaño asignados para cada carril 
-            arr_vehiculos[i] -> pos_inic_objetos[j] = espacio_libre - 1;
+            arr_vehiculos[i] -> pos_inic_objetos[0] = espacio_libre - 1;
             for(j = 1; j < arr_vehiculos[i] -> cant_obj; j++){
                 arr_vehiculos[i] -> pos_inic_objetos[j] = arr_vehiculos[i] -> pos_inic_objetos[j-1] - espacio_libre - 1 - rand() % 2;
             }
         }
         else{
-            arr_vehiculos[i] -> pos_inic_objetos[j] = (SIZE - 1) - (espacio_libre - 1);
+            arr_vehiculos[i] -> pos_inic_objetos[0] = (SIZE - 1) - (espacio_libre - 1);
             for(j = 1; j < arr_vehiculos[i] -> cant_obj; j++){
                 arr_vehiculos[i] -> pos_inic_objetos[j] = arr_vehiculos[i] -> pos_inic_objetos[j-1] + espacio_libre + 1 + rand() % 2;
             }
@@ -185,13 +197,13 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
         }
 
         if(arr_troncos[i] -> direccion == IZQ_A_DER){ //funcionamiento analogo a crear_vehiculos
-            arr_troncos[i] -> pos_inic_objetos[j] = espacio_libre - 1;
+            arr_troncos[i] -> pos_inic_objetos[0] = espacio_libre - 1;
             for(j = 1; j < arr_troncos[i] -> cant_obj; j++){
                 arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] - espacio_libre - arr_troncos[i] -> size_obj - rand() % 2;
             }
         }
         else{
-            arr_troncos[i] -> pos_inic_objetos[j] = (SIZE - 1) - (espacio_libre - 1);
+            arr_troncos[i] -> pos_inic_objetos[0] = (SIZE - 1) - (espacio_libre - 1);
             for(j = 1; j < arr_troncos[i] -> cant_obj; j++){
                 arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] + espacio_libre + arr_troncos[i] -> size_obj + rand() % 2;
             }
@@ -218,10 +230,14 @@ static void actualiza_linea(carril_t* linea){ //actualiza cada carril por sapara
     int i;
     if(((clock() - (linea -> tiempo_previo))/(double)CLOCKS_PER_SEC) >= linea -> velocidad){
         linea -> tiempo_previo = clock();
+	linea -> act_prev = 1;
         for(i = 0; i < linea -> cant_obj; i++){
             linea -> pos_inic_objetos[i] += (linea -> direccion == IZQ_A_DER) ? 1 : -1;
         }        
         carga_mapa(linea); //carga el mapa actualizado
+    }
+    else{
+    	linea -> act_prev = 0;
     }
 }
 

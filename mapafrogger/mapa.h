@@ -1,7 +1,7 @@
-/***************************************************************************//**
+/****************************************************************************
   @file     mapa.h
   @brief    Header del mapa del juego. 
-/*****************************************************************************/
+*****************************************************************************/
 #ifndef _MAPA_H_
 #define _MAPA_H_
 
@@ -41,7 +41,7 @@
 /*****************************************************************************/
 //                 constantes los distintos objetos del mapa                 //
 /*****************************************************************************/
-enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, SAFE, DEAD, WIN};
+enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 
 /*****************************************************************************/
 //   definicion del tipo de dato del mapa y de la estructura de cada carril  //
@@ -59,6 +59,7 @@ typedef struct{
     u_int8_t cant_obj; //cantidad de objetos en el carril
     int8_t pos_inic_objetos[MAX_ELEM]; //coordenada inicial de cada objeto en el carril
     clock_t tiempo_previo;
+    uint8_t act_prev;
 }carril_t;
 
 /*****************************************************************************/
@@ -84,7 +85,21 @@ void inicia_mapa(u_int8_t nivel);
  * @brief actualiza_mundo: actualiza el mapa linea por linea constantemente
  * @return: puntero al mapa 
 **/
-mapa_t* actualiza_mundo(void);
+mapa_t * actualiza_mundo(void);
+
+/*****************************************************************************
+ * @brief get_carril: busca un puntero a la estructura de un carril y lo devuelve 
+ * @param param1 linea: numero de linea a obtener 
+ * @return: puntero a carril
+**/
+carril_t * get_carril(uint8_t linea);
+
+/*****************************************************************************
+ * @brief get_mapa Devuelve el puntero al mapa
+ * @return: puntero al mapa
+**/
+mapa_t * get_mapa(void);
+
 /*****************************************************************************/
 
 #endif // _MAPA_H_
