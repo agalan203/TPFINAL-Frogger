@@ -76,7 +76,7 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
  * @brief OUTPUT_INITMENU_ALL: muestra el menu de inicio del juego por display
  * @param event_queue Puntero a la cola de eventos
  * @param ev Puntero a la variable que guarda los eventos
- * @return devuelve la accion a realizar (PLAY AGAIN- EXIT GAME)
+ * @return devuelve la accion a realizar (EXIT GAME)
 */
 action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev);
 /**

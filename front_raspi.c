@@ -374,7 +374,7 @@ void output_gameover_raspi (void){
 
     cpytodisplay(&gameover);
 
-    delay_falso(3.0);
+    delay_falso(1.5);
 
     //Imprime el puntaje obtenido en el display
     for (j=0;j<4;j++){
@@ -413,6 +413,8 @@ void output_gameover_raspi (void){
     }
 
     cpytodisplay(&blanco);
+    delay_falso(1.5);
+
 }
 
 /********************************* OUTPUT TOP SCORES RASPI **************************************/

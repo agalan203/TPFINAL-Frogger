@@ -30,3 +30,12 @@ mapa.o: mapa.c mapa.h
 
 mainraspi.o: mainraspi.c backend.h frontraspi.h globalstuff.h
 	${CC} ${OPTIONS} -c  mainraspi.c
+
+froggerallegro: mainallegro.o frontall.o backend.o mapa.o rana.o
+	${CC} ${OPTIONS} mainallegro.o frontall.o backend.o mapa.o rana.o -o froggerallegro `pkg-config --cflags --libs allegro-5` `pkg-config --cflags --libs allegro_acodec-5` `pkg-config --cflags --libs allegro_audio-5` `pkg-config --cflags --libs allegro_color-5` `pkg-config --cflags --libs allegro_font-5` `pkg-config --cflags --libs allegro_image-5` `pkg-config --cflags --libs allegro_main-5` `pkg-config --cflags --libs allegro_memfile-5` `pkg-config --cflags --libs allegro_physfs-5` `pkg-config --cflags --libs allegro_primitives-5` `pkg-config --cflags --libs allegro_ttf-5` `pkg-config --cflags --libs allegro_video-5`
+
+frontall.o: frontall.c globalstuff.h
+	${CC} ${OPTIONS} -c  frontall.c
+
+mainallegro.o: mainallegro.c backend.h frontall.h globalstuff.h
+	${CC} ${OPTIONS} -c  mainallegro.c

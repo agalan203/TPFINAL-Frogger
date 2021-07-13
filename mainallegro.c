@@ -1,9 +1,9 @@
-//MAIN RASPI:
+//MAIN ALLEGRO:
 /*****************************************************************************/
 
 //INCLUDES
 #include "globalstuff.h"
-#include "frontraspi.h"
+#include "frontall.h"
 #include "backend.h"
 
 /*****************************************************************************/
@@ -41,8 +41,159 @@ int main (void){
     int fila = 0;
     int maxfila = 15;
 
-    //incializo raspi
-    init_raspi();
+    //incializo allegro
+
+    //Creacion de variables para la utilizacion de allegro
+    ALLEGRO_DISPLAY *display = NULL;
+    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
+    ALLEGRO_EVENT ev;
+    ALLEGRO_BITMAP * background;
+    ALLEGRO_BITMAP * automovil1;
+    ALLEGRO_BITMAP * automovil2;
+    ALLEGRO_BITMAP * camion;
+    ALLEGRO_BITMAP * log2;
+    ALLEGRO_BITMAP * log3;
+    ALLEGRO_BITMAP * log4;
+    ALLEGRO_BITMAP * ranita;
+    ALLEGRO_BITMAP * ranamuerta; 
+    ALLEGRO_BITMAP * lives;
+    ALLEGRO_BITMAP * llego;
+
+    //inicializacion de allegro
+    init_allegro(&event_queue,&display);
+
+    background = al_load_bitmap ("all_images/frogger_bck.png");
+    if(!background)
+    {
+        fprintf(stderr, "failed to load background bitmap!\n");
+        return -1;
+    }
+
+    automovil1 = al_load_bitmap ("all_images/car3.png");
+    if(!automovil1)
+    {
+        fprintf(stderr, "failed to load automovil1 bitmap!\n");
+        al_destroy_bitmap(background);
+        return -1;
+    }
+
+    automovil2 = al_load_bitmap ("all_images/car4.png");
+    if(!automovil2)
+    {
+        fprintf(stderr, "failed to load automovil2 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        return -1;
+    }
+
+    camion = al_load_bitmap ("all_images/truck1.png");
+    if(!camion)
+    {
+        fprintf(stderr, "failed to load truck bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        return -1;
+    }
+
+    log2 = al_load_bitmap ("all_images/log2.png");
+    if(!log2)
+    {
+        fprintf(stderr, "failed to load log2 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        return -1;
+    }
+
+    log3 = al_load_bitmap ("all_images/log3.png");
+    if(!log3)
+    {
+        fprintf(stderr, "failed to load log3 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        return -1;
+    }
+
+    log4 = al_load_bitmap ("all_images/log4.png");
+    if(!log4)
+    {
+        fprintf(stderr, "failed to load log4 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        return -1;
+    }
+
+    ranita = al_load_bitmap ("all_images/frog.png");
+    if(!ranita)
+    {
+        fprintf(stderr, "failed to load ranita bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        return -1;
+    }
+
+    ranamuerta = al_load_bitmap ("all_images/deadfrog.png");
+    if(!ranamuerta)
+    {
+        fprintf(stderr, "failed to load ranamuerta bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        return -1;
+    }
+
+    lives = al_load_bitmap ("all_images/lives.png");
+    if(!lives)
+    {
+        fprintf(stderr, "failed to load lives bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        al_destroy_bitmap(ranamuerta);
+        return -1;
+    }
+
+    llego = al_load_bitmap ("all_images/llego.png");
+    if(!llego)
+    {
+        fprintf(stderr, "failed to load lives bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        al_destroy_bitmap(log2);
+        al_destroy_bitmap(log3);
+        al_destroy_bitmap(log4);
+        al_destroy_bitmap(ranita);
+        al_destroy_bitmap(ranamuerta);
+        al_destroy_bitmap(lives);
+        return -1;
+    }
+    //Finaliza la inicializacion de allegro
 
     //muestro el menu de inicio
     do{
@@ -59,10 +210,10 @@ int main (void){
         puntajeactual = 0;
 
         //menu de inicio
-        accion = output_initmenu_raspi();
+        accion = output_initmenu_all(event_queue,&ev); 
         switch (accion){
             case TOPSCORES:
-                output_topscores_raspi();
+                output_topscores_all(event_queue,&ev);
                 break;
             case EXIT:
                 exit_prgm = 1;
@@ -81,14 +232,12 @@ int main (void){
             rana.estado = VIVA;
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
-            output_world_raspi(&mundo,&rana);
-            output_frog_raspi(&rana);
-
+            output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
             while (!exit_game){
 
                 //pido e interpreto una entrada
-                accion = get_input_raspi();
+                accion = get_input_all(event_queue,&ev);
                 switch (accion){
                     case NONE:
                         evento = '0';
@@ -96,7 +245,7 @@ int main (void){
                     case PLAY:
                         evento = 'p';
                         estado=juego_rana_b(evento,nivel,&prana,&pmapa);
-                        accion = output_gamepaused_raspi ();
+                        accion = output_gamepaused_all (event_queue,&ev);
                         if (accion == EXIT){
                             istopscore();
                             exit_game = 1;
@@ -124,9 +273,9 @@ int main (void){
                 frogbcktofrnt (prana ,&rana, pmapa);
                 if (estado == MUERE){
                     rana.estado = MUERTA;
-                    output_dead_raspi();
+                    output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
                     if (rana.vidas == 0){
-                        output_gameover_raspi();
+                        output_gameover_all(event_queue,&ev);
                         istopscore();
                         exit_game = 1;
                     }
@@ -136,8 +285,7 @@ int main (void){
                 }
                 rana.nivel = (uint8_t) nivel + '0';
                 mapbcktofrnt (pmapa, &mundo);
-                output_world_raspi(&mundo,&rana);
-                output_frog_raspi(&rana);
+                output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
                 //actualizo el puntaje
                 fila = rana.coords.y;
@@ -164,9 +312,6 @@ int main (void){
                 //veo si paso de nivel
                 if (prana->llegadas == 5){
                     nivel++;
-                    if (nivel < 6){
-                        output_level_raspi(&rana);
-                    }
                     if (nivel == 6){
                         exit_game = 1;
                     }           
@@ -174,6 +319,24 @@ int main (void){
             }
         }
     } while (!exit_prgm);
+
+    //destruye allegro
+    al_destroy_bitmap(background);
+    al_destroy_bitmap(automovil1);
+    al_destroy_bitmap(automovil2);
+    al_destroy_bitmap(camion);
+    al_destroy_bitmap(log2);
+    al_destroy_bitmap(log3);
+    al_destroy_bitmap(log4);
+    al_destroy_bitmap(ranita);
+    al_destroy_bitmap(ranamuerta);
+    al_destroy_bitmap(llego);
+    al_destroy_bitmap(lives);
+    al_shutdown_font_addon();
+    al_shutdown_ttf_addon();
+    al_shutdown_primitives_addon();
+    al_shutdown_image_addon();
+    al_destroy_display(display);
 
     return 0;
 }

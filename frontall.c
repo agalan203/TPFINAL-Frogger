@@ -333,9 +333,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
 
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,370,ALLEGRO_ALIGN_CENTRE,"GAME OVER");
-    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,530,ALLEGRO_ALIGN_CENTRE,"Press spacebar");
-    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,580,ALLEGRO_ALIGN_CENTRE,"to play again");
-    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,670,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
+    al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,570,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");
 
     al_flip_display();
 
@@ -343,7 +341,6 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     do{
         accion = get_input_all(event_queue,ev);
         switch (accion){
-            case PLAY:
             case EXIT:
                 exit = true;
                 break;
@@ -452,161 +449,6 @@ int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * backgroun
         al_destroy_font(font);
         return -1;
     }
-    /* copiar esto en MAIN
-    background = al_load_bitmap ("all_images/frogger_bck.png");
-    if(!background)
-    {
-        fprintf(stderr, "failed to load background bitmap!\n");
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    automovil1 = al_load_bitmap ("all_images/car3.png");
-    if(!automovil1)
-    {
-        fprintf(stderr, "failed to load automovil1 bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    automovil2 = al_load_bitmap ("all_images/car4.png");
-    if(!automovil2)
-    {
-        fprintf(stderr, "failed to load automovil2 bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    camion = al_load_bitmap ("all_images/truck1.png");
-    if(!camion)
-    {
-        fprintf(stderr, "failed to load truck bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    log2 = al_load_bitmap ("all_images/log2.png");
-    if(!log2)
-    {
-        fprintf(stderr, "failed to load log2 bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    log3 = al_load_bitmap ("all_images/log3.png");
-    if(!log3)
-    {
-        fprintf(stderr, "failed to load log3 bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    log4 = al_load_bitmap ("all_images/log4.png");
-    if(!log4)
-    {
-        fprintf(stderr, "failed to load log4 bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_bitmap(log3);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    ranita = al_load_bitmap ("all_images/frog.png");
-    if(!ranita)
-    {
-        fprintf(stderr, "failed to load ranita bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_bitmap(log3);
-        al_destroy_bitmap(log4);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    ranamuerta = al_load_bitmap ("all_images/deadfrog.png");
-    if(!ranamuerta)
-    {
-        fprintf(stderr, "failed to load ranamuerta bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_bitmap(log3);
-        al_destroy_bitmap(log4);
-        al_destroy_bitmap(ranita);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    lives = al_load_bitmap ("all_images/lives.png");
-    if(!lives)
-    {
-        fprintf(stderr, "failed to load lives bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_bitmap(log3);
-        al_destroy_bitmap(log4);
-        al_destroy_bitmap(ranita);
-        al_destroy_bitmap(ranamuerta);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-
-    llego = al_load_bitmap ("all_images/llego.png");
-    if(!llego)
-    {
-        fprintf(stderr, "failed to load lives bitmap!\n");
-        al_destroy_bitmap(background);
-        al_destroy_bitmap(automovil1);
-        al_destroy_bitmap(automovil2);
-        al_destroy_bitmap(camion);
-        al_destroy_bitmap(log2);
-        al_destroy_bitmap(log3);
-        al_destroy_bitmap(log4);
-        al_destroy_bitmap(ranita);
-        al_destroy_bitmap(ranamuerta);
-        al_destroy_bitmap(lives);
-        al_destroy_font(font);
-        fclose(topscores);
-        return -1;
-    }
-    HASTA ACA COPIAR EN MAIN */
 
     al_draw_bitmap(background,0,0,0);
 
