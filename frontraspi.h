@@ -31,6 +31,12 @@
 typedef uint8_t rpinr_t[5][3];
 
 /*******************************************************************************
+ * EXTERNAL VARIABLES
+ ******************************************************************************/
+extern uint16_t puntajeactual;
+extern char puntajestring [5];
+
+/*******************************************************************************
  * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
  ******************************************************************************/
 
@@ -77,7 +83,7 @@ void output_dead_raspi (void);
 */
 void output_gameover_raspi (void);
 /**
- * @brief OUTPUT_GAMEOVER_RASPI: muestra el numero del nivel y la cant de vidas
+ * @brief OUTPUT_LEVEL_RASPI: muestra el numero del nivel y la cant de vidas
  * @param rana Puntero a la rana (jugador)
 */
 void output_level_raspi (rana_t * rana);

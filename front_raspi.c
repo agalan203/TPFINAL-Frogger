@@ -23,7 +23,7 @@ void delay_falso(double); //delay no bloqueante de una cantidad de segundos que 
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
-
+enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 //Numeros para imprimir en el display de la raspi
 static rpinr_t uno = {
     {0,1,0},
@@ -171,7 +171,7 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
             switch ((*mundo)[i][j]){
                 case STREET:
                 case WATER:
-                case HOME:
+                case WIN:
                     disp_write(myPoint, D_OFF);
                     break;
                 case CAR:
@@ -179,6 +179,7 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
                 case SAFE:
                 case LOG:
                 case DEAD:
+                case OCUPADO:
                     disp_write(myPoint, D_ON);
                     break;
             }
@@ -328,6 +329,7 @@ void output_dead_raspi (void){
     };
 
     cpytodisplay(&deadfrog);
+    delay_falso(2.0);
 }
 
 /********************************* GAME OVER **************************************/
@@ -609,6 +611,8 @@ mundo_t level = {
     }
     
     cpytodisplay(&level);
+    delay_falso(2.0);
+
 }
 
 /*******************************************************************************

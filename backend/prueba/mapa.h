@@ -41,7 +41,7 @@
 /*****************************************************************************/
 //                 constantes los distintos objetos del mapa                 //
 /*****************************************************************************/
-enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
+enum cell_state {STREET=0, CAR, TRUCK,WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 
 /*****************************************************************************/
 //   definicion del tipo de dato del mapa y de la estructura de cada carril  //

@@ -32,7 +32,7 @@ int main(void) {
     return 0;
 }
 */
-
+enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -445,14 +445,14 @@ int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * backgroun
     ALLEGRO_FONT * font = al_load_ttf_font ("FreePixel.ttf",36,0);
 
     //inicializa todo lo requerido
-    /* copiar esto en MAIN
+    
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
         al_destroy_font(font);
         return -1;
     }
-
+    /* copiar esto en MAIN
     background = al_load_bitmap ("all_images/frogger_bck.png");
     if(!background)
     {
