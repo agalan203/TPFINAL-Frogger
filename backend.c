@@ -61,7 +61,7 @@ void juego_rana_init_b(uint8_t vidas,uint8_t nivel){
 
 
 int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
-	int estado_rana;
+	int estado_rana = 0;
  	int tm_max=MAX_TIEMPO-(nivel-1)*5;
 	static int prev_nivel=1;
 	static int pausa=0;

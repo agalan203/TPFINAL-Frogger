@@ -32,7 +32,6 @@ int main (void){
     mundo_t mundo;
     rana_t rana;
     action_t accion;
-    clock_t comienzo = clock();
 
     //flags
     int exit_game = 0;
@@ -53,7 +52,6 @@ int main (void){
         maxfila = 15;
         prana = get_rana();
         pmapa = get_mapa();
-        comienzo = clock();
         exit_game = 0;
         strt_game = 0;
         puntajeactual = 0;
@@ -171,6 +169,7 @@ int main (void){
                     }
                     if (nivel == 6){
                         exit_game = 1;
+                        istopscore();
                     }           
                 }
                 if(exit_game){
@@ -280,6 +279,9 @@ void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa){ //esta f
     for(i = 2,j=0; i <= 14; i= i+3,j++){
         if((*pmapa)[1][i] == OCUPADO){
             rana->llego[j]=1;
+        }
+        else{
+            rana->llego[j]=0;
         }
     }
 }
