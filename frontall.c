@@ -520,25 +520,15 @@ int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * backgroun
     //muestra los casilleros a donde ya llego la rana
     for (i=0;i<5;i++){
         if(rana->llego[i]){
-            al_draw_bitmap(llego,82+2*116*i,ITEM*2-10,0);
+            al_draw_bitmap(llego,135+216*i,ITEM*2-8,0);
         }
     }
 
     al_flip_display();
     
-    /* ESTO COPIAR AL FINAL DE MAIN
-    al_destroy_bitmap(background);
-    al_destroy_bitmap(automovil1);
-    al_destroy_bitmap(automovil2);
-    al_destroy_bitmap(camion);
-    al_destroy_bitmap(log2);
-    al_destroy_bitmap(log3);
-    al_destroy_bitmap(log4);
-    al_destroy_bitmap(ranita);
-    al_destroy_bitmap(ranamuerta);
-    al_destroy_bitmap(llego);
-    al_destroy_bitmap(lives);
-    HASTA ACA COPIAR EN MAIN */
+    if (rana->estado == MUERTA){
+        al_rest(1.0);
+    }
     
     al_destroy_font(font);
     fclose(topscores);

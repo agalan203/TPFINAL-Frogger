@@ -33,6 +33,7 @@ int main (void){
     rana_t rana;
     action_t accion;
     clock_t comienzo = clock();
+    rana_t auxfrog;
 
     //flags
     int exit_game = 0;
@@ -235,7 +236,8 @@ int main (void){
             output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
             while (!exit_game){
-
+                //rana vieja
+                frogbcktofrnt (prana,&auxfrog,pmapa);
                 //pido e interpreto una entrada
                 accion = get_input_all(event_queue,&ev);
                 switch (accion){
@@ -272,10 +274,9 @@ int main (void){
                 estado=juego_rana_b(evento,nivel,&prana,&pmapa);
                 frogbcktofrnt (prana ,&rana, pmapa);
                 if (estado == MUERE){
-                    rana.estado = MUERTA;
-                    output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                    auxfrog.estado = MUERTA;
+                    output_world_all (&auxfrog, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
                     if (rana.vidas == 0){
-                        output_gameover_all(event_queue,&ev);
                         istopscore();
                         exit_game = 1;
                     }
@@ -285,7 +286,9 @@ int main (void){
                 }
                 rana.nivel = (uint8_t) nivel + '0';
                 mapbcktofrnt (pmapa, &mundo);
-                output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                if (!exit_game){
+                    output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                }
 
                 //actualizo el puntaje
                 fila = rana.coords.y;
@@ -296,6 +299,7 @@ int main (void){
                     puntajeactual += 10;
                     if (puntajeactual>=9999){
                         puntajeactual = 9999;
+                        numTostring();
                         istopscore();
                         exit_game = 1;
                     }
@@ -315,6 +319,9 @@ int main (void){
                     if (nivel == 6){
                         exit_game = 1;
                     }           
+                }
+                if (exit_game && (accion!= EXIT)){
+                    output_gameover_all(event_queue,&ev);
                 }
             }
         }

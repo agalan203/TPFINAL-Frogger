@@ -126,7 +126,6 @@ int main (void){
                     rana.estado = MUERTA;
                     output_dead_raspi();
                     if (rana.vidas == 0){
-                        output_gameover_raspi();
                         istopscore();
                         exit_game = 1;
                     }
@@ -136,8 +135,10 @@ int main (void){
                 }
                 rana.nivel = (uint8_t) nivel + '0';
                 mapbcktofrnt (pmapa, &mundo);
-                output_world_raspi(&mundo,&rana);
-                output_frog_raspi(&rana);
+                if((estado == VIVE) && (!exit_game)){
+                    output_world_raspi(&mundo,&rana);
+                    output_frog_raspi(&rana);
+                }
 
                 //actualizo el puntaje
                 fila = rana.coords.y;
@@ -148,6 +149,7 @@ int main (void){
                     puntajeactual += 10;
                     if (puntajeactual>=9999){
                         puntajeactual = 9999;
+                        numTostring();
                         istopscore();
                         exit_game = 1;
                     }
@@ -171,9 +173,14 @@ int main (void){
                         exit_game = 1;
                     }           
                 }
+                if(exit_game){
+                    output_gameover_raspi();
+                }
             }
         }
     } while (!exit_prgm);
+    disp_clear();
+    disp_update();
 
     return 0;
 }
