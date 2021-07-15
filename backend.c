@@ -107,7 +107,7 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 
 		/*Antes de actualizar el mapa me fijo si la rana esta en un tronco*/
 		pmapa=get_mapa();
-		rana_tronco=((*pmapa)[prana->pos_y][prana->pos_x]==LOG)?1:0;
+		rana_tronco=( ((*pmapa)[prana->pos_y][prana->pos_x]) == LOG) ? 1 : 0;
 
 		/*Actualizo mapa*/
 		pmapa=actualiza_mundo();
@@ -173,7 +173,7 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 static int act_rana_tronco(rana_be_t * prana){
 	int estado_rana=0;
 	carril_t * linea;
-	linea=get_carril(prana->pos_y-2);/*Linea de tronco en pos_y-DEAD-HOME*/
+	linea=get_carril((prana->pos_y) - 2);/*Linea de tronco en pos_y-DEAD-HOME*/
 	if(linea->act_prev==1){
 		/*Si el tronco se movio, entonces la rana se mueve con el*/
 		if(linea->direccion==IZQ_A_DER){
