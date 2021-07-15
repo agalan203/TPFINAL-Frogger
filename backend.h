@@ -1,7 +1,7 @@
 /***************************************************************************//**
-  @file     +Nombre del archivo (ej: template.h)+
-  @brief    +Descripcion del archivo+
-  @author   +Nombre del autor (ej: Salvador Allende)+
+  @file     +backend.c+
+  @brief    +funciones que administran el backend del juego+
+  @author   +Grupo 1: Cristian Meichtry, Juan Martin Rodriguez+
  ******************************************************************************/
 
 #ifndef _BACKEND_H_
@@ -10,19 +10,22 @@
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
 #include "rana.h"
 #include "mapa.h"
-
 
 /*******************************************************************************
  * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
  ******************************************************************************/
+
 #define POSX_I SIZE/2
 #define POSY_I SIZE-1
 #define MAX_TIEMPO 60
+
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
+
 enum estado_juego {VIVE=0,MUERE,LLEGO,PAUSA};
 
 /*******************************************************************************
@@ -69,6 +72,5 @@ int juego_rana_b(char evento, uint8_t nivel, rana_be_t ** rana, mapa_t ** mapa);
 
 /*******************************************************************************
  ******************************************************************************/
-
 
 #endif // _BACKEND_H_

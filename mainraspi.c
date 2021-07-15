@@ -1,49 +1,63 @@
-//MAIN RASPI:
-/*****************************************************************************/
+/***************************************************************************//**
+  @file     +mainraspi.c+
+  @brief    +programa principal de FROGGER para implementacion en rpi+
+  @author   +Grupo 1: Meichtry,Rodriguez,Ruiz,Galan+
+ ******************************************************************************/
 
-//INCLUDES
+/*******************************************************************************
+ * INCLUDE HEADER FILES
+ ******************************************************************************/
+
 #include "globalstuff.h"
 #include "frontraspi.h"
 #include "backend.h"
 
-/*****************************************************************************/
+/*******************************************************************************
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ ******************************************************************************/
 
-//PROTOTIPOS DE FUNCIONES LOCALES
-void numTostring (void);
-uint16_t stringTonum (char * string);
-void istopscore (void);
-int comparescores (const void * puntaje1, const void * puntaje2);
-void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa);
-void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo);
+void numTostring (void);    //transforma el puntajeactual a puntajestring
+uint16_t stringTonum (char * string);   //transforma un string de 4 numeros a un entero
+void istopscore (void);     //evalua si el puntajeactual entra en los top 4 puntajes y los guarda en el file correspondiente
+int comparescores (const void * puntaje1, const void * puntaje2);   //compara dos puntajes para ordenarlos decrecientemente
+void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa);     //transforma la estructura rana del backend a la del frontend
+void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo);    //transforma el mapa del backend en el del frontend
 
-/*****************************************************************************/
-//VARIABLES GLOBALES
-uint16_t puntajeactual = 0;
-char puntajestring [5] = "0000";
+/*******************************************************************************
+ * VARIABLES WITH GLOBAL SCOPE
+ ******************************************************************************/
 
-//MAIN
+uint16_t puntajeactual = 0;     //puntaje numerico actual
+char puntajestring [5] = "0000";    //puntaje actual en formato string
+
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
 int main (void){
-    //variables
+    //variables locales al main
     int nivel = 1;
     int estado;
+    int fila = 0;
+    int maxfila = 15;
 	char evento = '0';
-	rana_be_t * prana = get_rana();
-	mapa_t * pmapa = get_mapa();
-    mundo_t mundo;
-    rana_t rana;
     action_t accion;
+	rana_be_t * prana = get_rana(); //puntero a la rana del backend
+	mapa_t * pmapa = get_mapa();    //puntero al mapa del backend
+    mundo_t mundo;      //mapa del frontend
+    rana_t rana;        //rana del frontend
 
     //flags
     int exit_game = 0;
     int exit_prgm = 0;
     int strt_game = 0;
-    int fila = 0;
-    int maxfila = 15;
 
-    //incializo raspi
+    //incializo la rpi
     init_raspi();
 
-    //muestro el menu de inicio
+    //inicio el loop del programa
     do{
         //resetear las variables
         nivel = 1;
@@ -56,17 +70,18 @@ int main (void){
         strt_game = 0;
         puntajeactual = 0;
 
-        //menu de inicio
+        //muestro el menu de inicio
         accion = output_initmenu_raspi();
+        //acciones posibles que se pudieron haber dado en el menu de inicio
         switch (accion){
             case TOPSCORES:
-                output_topscores_raspi();
+                output_topscores_raspi();   //muestra los 4 highscores
                 break;
             case EXIT:
-                exit_prgm = 1;
+                exit_prgm = 1;              //indica que se debe cerrar el programa entero
                 break;
             case PLAY:
-                strt_game = 1;
+                strt_game = 1;              //indica que se debe comenzar el juego
                 break;
         }
 
@@ -74,18 +89,19 @@ int main (void){
         if (strt_game){
 
             //incializo el backend
-            juego_rana_init_b(3,nivel);	
+            juego_rana_init_b(3,nivel); 
             frogbcktofrnt (prana ,&rana, pmapa);
             rana.estado = VIVA;
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
+            //muestro el mundo inicial en el display
             output_world_raspi(&mundo,&rana);
             output_frog_raspi(&rana);
 
-
+            //incio el loop del juego
             while (!exit_game){
 
-                //pido e interpreto una entrada
+                //pido e interpreto una entrada (traduce las acciones del front para ser utilizadas por el back)
                 accion = get_input_raspi();
                 switch (accion){
                     case NONE:
@@ -94,7 +110,7 @@ int main (void){
                     case PLAY:
                         evento = 'p';
                         estado=juego_rana_b(evento,nivel,&prana,&pmapa);
-                        accion = output_gamepaused_raspi ();
+                        accion = output_gamepaused_raspi ();    //si se puso pausa muestro el menu de pausa y veo que se eligio hacer
                         if (accion == EXIT){
                             istopscore();
                             exit_game = 1;
@@ -120,12 +136,13 @@ int main (void){
                 //actualizo y muestro el mundo
                 estado=juego_rana_b(evento,nivel,&prana,&pmapa);
                 frogbcktofrnt (prana ,&rana, pmapa);
+                //evaluo el estado de la rana
                 if (estado == MUERE){
                     rana.estado = MUERTA;
-                    output_dead_raspi();
+                    output_dead_raspi();    //si fue atropellada lo muestro
                     if (rana.vidas == 0){
                         istopscore();
-                        exit_game = 1;
+                        exit_game = 1;      //si perdio todas las vidas lo indico para mostrar gameover y salir
                     }
                 }
                 else if (estado == VIVE){
@@ -133,6 +150,7 @@ int main (void){
                 }
                 rana.nivel = (uint8_t) nivel + '0';
                 mapbcktofrnt (pmapa, &mundo);
+                //el mundo solo se actualiza y muestra si la rana esta viva y no se pidio salir del juego
                 if((estado == VIVE) && (!exit_game)){
                     output_world_raspi(&mundo,&rana);
                     output_frog_raspi(&rana);
@@ -140,12 +158,12 @@ int main (void){
 
                 //actualizo el puntaje
                 fila = rana.coords.y;
-                if (fila < maxfila){
+                if (fila < maxfila){    //se evalua si se encuentra en la mayor fila alcanzada
                     maxfila = fila;
                 }
-                if ((rana.estado == VIVA) && (rana.coords.y == maxfila) && (evento == 'u')){
-                    puntajeactual += 10;
-                    if (puntajeactual>=9999){
+                if ((rana.estado == VIVA) && (rana.coords.y == maxfila) && (evento == 'u')){    //se fija si se debe sumar puntos
+                    puntajeactual += 10;        //por cada fila que avanza se suman 10 puntos
+                    if (puntajeactual>=9999){   //es el puntaje maximo obtenible, ganador absoluto del juego
                         puntajeactual = 9999;
                         numTostring();
                         istopscore();
@@ -153,7 +171,7 @@ int main (void){
                     }
                     numTostring();
                 }
-                if (estado == LLEGO){
+                if (estado == LLEGO){       //si llego del otro lado con tiempo del timer sobrante, se le suma como puntos el tiempo extra
                     puntajeactual += (int) prana->tiempo_res;
                     if (puntajeactual>=9999){
                         exit_game = 1;
@@ -162,30 +180,36 @@ int main (void){
                 }
 
                 //veo si paso de nivel
-                if (prana->llegadas == 5){
+                if (prana->llegadas == 5){  //para pasar de nivel debe completar las 5 casillas de llegada
                     nivel++;
                     if (nivel < 6){
                         output_level_raspi(&rana);
                     }
-                    if (nivel == 6){
+                    if (nivel == 6){    //el nivel maximo es el nivel 5
                         exit_game = 1;
                         istopscore();
                     }           
                 }
+                //si se pidio salir, muestra gameover y el puntaje obtenido en la partida
                 if(exit_game){
                     output_gameover_raspi();
                 }
             }
         }
-    } while (!exit_prgm);
+    } while (!exit_prgm);   //el loop se ejecuta hasta que se pida cerrar el programa entero
+
+    //limpia y apaga el display de la raspi
     disp_clear();
     disp_update();
 
     return 0;
 }
 
-/*****************************************************************************/
-//DEFINICIONES DE FUNCIONES LOCALES
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 //Transformar puntajeactual a puntajestring
 void numTostring (void){
@@ -200,7 +224,7 @@ void numTostring (void){
     puntajestring[4] = '\0';
 }
 
-//Transformar de string a numero
+//Transformar un string de 4 numeros a un entero
 uint16_t stringTonum (char * string){
     uint16_t var=0, n=1000;
     int i;
@@ -234,6 +258,7 @@ void istopscore (void){
     qsort(newscores[0], 5, sizeof(newscores)/sizeof(newscores[0]), comparescores);
 
     fclose(topscores);
+    //se cierra y vuelve a abrir el archivo para que comienze a escribir desde el principio del file y se sobreescriba lo anterior
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
@@ -246,7 +271,7 @@ void istopscore (void){
     fclose(topscores);
 }
 
-//funcion para comparar puntajes
+//funcion para comparar puntajes para qsort
 int comparescores (const void * puntaje1, const void * puntaje2){
     char * pp1 = (char *) puntaje1;
     char * pp2 = (char *) puntaje2;

@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     +frontraspi.c+
   @brief    +Front End de Frogger para un display matricial en RPI+
-  @author   +Grupo 1: Albertina Galan+
+  @author   +Grupo 1: Albertina Galan, Lucia Ruiz+
  ******************************************************************************/
 
 /*******************************************************************************
@@ -19,11 +19,15 @@ static void cpytoworld(mundo_t * mundo,rpinr_t * nro, uint8_t xo, uint8_t yo ); 
 static void cpytodisplay (mundo_t * mundo); //copia un 'mundo' en el display
 void delay_falso(double); //delay no bloqueante de una cantidad de segundos que recibe
 
+/*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
+
+enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 
 /*******************************************************************************
  * STATIC VARIABLES AND CONST VARIABLES WITH FILE LEVEL SCOPE
  ******************************************************************************/
-enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 //Numeros para imprimir en el display de la raspi
 static rpinr_t uno = {
     {0,1,0},
@@ -95,17 +99,6 @@ static rpinr_t cero = {
     {1,0,1},
     {1,1,1}
     };
-
-
-// MAIN TEST : EJEMPLO
-/*
-int main (void){
-    init_raspi();
-    output_topscores_raspi();
-    output_world_raspi(&world,&frog);
-    return 0;
-}
-*/
 
 /*******************************************************************************
  *******************************************************************************
@@ -240,7 +233,7 @@ action_t output_gamepaused_raspi (void){  //muestra el menu de pausa en el displ
 
     //espera a que se introduzca una de las acciones validas
     do{
-        click = get_disp_coord (&gamepausedrpi);
+        click = get_disp_coord (&gamepausedrpi);    //se fija que hay en el lugar donde se hizo click
         if ((click.x >= 3) && (click.x <= 5) && (click.y >= 6) && (click.y <= 8)){
             accion = PLAY;
             repeat = 1;
@@ -286,7 +279,7 @@ action_t output_initmenu_raspi (void){ //muestra el menu de inicio en el display
     
     //espera a que se introduzca una de las acciones validas
     do{
-        click = get_disp_coord (&initmenurpi);
+        click = get_disp_coord (&initmenurpi);  //se fija que hay en el lugar donde se hizo click
         if ((click.x >= 4) && (click.x <= 6) && (click.y >= 8) && (click.y <= 10)){
             accion = PLAY;
             repeat = 1;

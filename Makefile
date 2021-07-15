@@ -1,11 +1,11 @@
 CC := gcc
 OPTIONS = -g -Wall
 
-froggerraspi: mainraspi.o front_raspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o
-	${CC} ${OPTIONS} mainraspi.o front_raspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o -o froggerraspi
+froggerraspi: mainraspi.o frontraspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o
+	${CC} ${OPTIONS} mainraspi.o frontraspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o -o froggerraspi
 
-front_raspi.o: front_raspi.c globalstuff.h disdrv.h joydrv.h termlib.h
-	${CC} ${OPTIONS} -c  front_raspi.c
+frontraspi.o: frontraspi.c globalstuff.h disdrv.h joydrv.h termlib.h
+	${CC} ${OPTIONS} -c  frontraspi.c
 
 backend.o: backend.c rana.h mapa.h
 	${CC} ${OPTIONS} -c  backend.c
@@ -29,4 +29,4 @@ mainallegro.o: mainallegro.c backend.h frontall.h globalstuff.h
 	${CC} ${OPTIONS} -c  mainallegro.c
 
 clean:
-	rm mapa.o rana.o backend.o frontall.o mainallegro.o mainraspi.o front_raspi.o
+	rm mapa.o rana.o backend.o frontall.o mainallegro.o mainraspi.o frontraspi.o

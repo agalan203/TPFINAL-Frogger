@@ -1,25 +1,14 @@
 /***************************************************************************//**
-  @file     backend.c
-  @brief    
-  @author   grupo 1
+  @file     +backend.c+
+  @brief    +funciones que administran el backend del juego+
+  @author   +Grupo 1: Cristian Meichtry, Juan Martin Rodriguez+
  ******************************************************************************/
 
 /*******************************************************************************
  * INCLUDE HEADER FILES
  ******************************************************************************/
+
 #include "backend.h"
-
-
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
-
-
-
-/*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
- ******************************************************************************/
-
 
 /*******************************************************************************
  * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
@@ -182,6 +171,3 @@ static void rana_muere(rana_be_t * prana){
 	prana->vidas--;
 	rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
 }
-
-
- 

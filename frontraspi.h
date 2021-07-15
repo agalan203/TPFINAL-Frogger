@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     +frontraspi.h+
   @brief    +Front End de Frogger para un display matricial en RPI+
-  @author   +Grupo 1: Albertina Galan+
+  @author   +Grupo 1: Albertina Galan, Lucia Ruiz+
  ******************************************************************************/
 
 #ifndef _FRONTRASPI_H_
@@ -33,6 +33,7 @@ typedef uint8_t rpinr_t[5][3];
 /*******************************************************************************
  * EXTERNAL VARIABLES
  ******************************************************************************/
+
 extern uint16_t puntajeactual;
 extern char puntajestring [5];
 

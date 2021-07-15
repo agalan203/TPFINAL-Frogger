@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     +frontall.h+
   @brief    +Front End de Frogger para un display grafico con librerias Allegro+
-  @author   +Grupo 1: Albertina Galan+
+  @author   +Grupo 1: Albertina Galan, Lucia Ruiz+
  ******************************************************************************/
 
 #ifndef _FRONTALL_H_
@@ -30,6 +30,7 @@
 /*******************************************************************************
  * EXTERNAL VARIABLES
  ******************************************************************************/
+
 extern uint16_t puntajeactual;
 extern char puntajestring [5];
 
