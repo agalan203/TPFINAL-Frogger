@@ -19,6 +19,20 @@ int comparescores (const void * puntaje1, const void * puntaje2); //compara dos 
 void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa); //transforma la estructura rana del backend a la del frontend
 void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo); //transforma el mapa del backend en el del frontend
 
+
+void mostrar(mapa_t * pmapa,rana_be_t * prana);
+void mostrar(mapa_t * pmapa,rana_be_t * prana){
+	int j,i;
+	for(i = 0; i < SIZE; i++){
+		for(j = 0; j < SIZE; j++){
+			printf("%d ", (*pmapa)[i][j]);
+		}
+		printf("\n");
+	}
+//	printf("\n");	
+	printf("POSX: %d ; POSY: %d ; vidas: %d ; llegadas: %d\n",prana->pos_x,prana->pos_y,prana->vidas, prana->llegadas);
+}
+
 /*******************************************************************************
  * VARIABLES WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -268,6 +282,8 @@ int main (void){
                         }
                         break;
                     case UP:
+
+			mostrar(pmapa,prana);
                         evento = 'u';
                         break;
                     case DOWN:
