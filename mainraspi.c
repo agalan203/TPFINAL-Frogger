@@ -189,6 +189,7 @@ int main (void){
                 if (prana->llegadas == 5){  //para pasar de nivel debe completar las 5 casillas de llegada
                     nivel++;
                     if (nivel < 6){
+                        rana.nivel++;
                         output_level_raspi(&rana);
                     }
                     if (nivel == 6){    //el nivel maximo es el nivel 5
