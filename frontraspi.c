@@ -121,43 +121,54 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
     
     jcoord_t myCoords;
     action_t accion = NONE;
+    jswitch_t pressed;
     static int over = 1;
+    static int nopress = 1;
 
     //primero actualizo las coordenadas medidas
     joy_update();
     //luego las guardo en myCoords
     myCoords = joy_get_coord();
-
-    switch (joy_get_switch()){
-    case J_PRESS:
-        accion = PLAY;
-        break;
-    case J_NOPRESS:
-        if (over){
-            if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
-                accion = RIGHT;
-            }
-            else if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x < -THRESHOLD) ){
-                accion = LEFT;
-            }
-            else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y > THRESHOLD) ){
-                accion = UP;
-            }
-            else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y < -THRESHOLD) ){
-                accion = DOWN;
+    pressed = joy_get_switch();
+    switch (pressed){
+        case J_PRESS:
+            if (nopress){
+                accion = PLAY;
             }
             else {
                 accion = NONE;
             }
-        }
-        else {
-            accion = NONE;
-        }
-        over = 0;
-        break;
-}
+            nopress = 0;
+            break;
+        case J_NOPRESS:
+            if (over){
+                if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
+                    accion = RIGHT;
+                }
+                else if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x < -THRESHOLD) ){
+                    accion = LEFT;
+                }
+                else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y > THRESHOLD) ){
+                    accion = UP;
+                }
+                else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y < -THRESHOLD) ){
+                    accion = DOWN;
+                }
+                else {
+                    accion = NONE;
+                }
+            }
+            else {
+                accion = NONE;
+            }
+            over = 0;
+            break;
+    }
 if ((myCoords.x == 0) && (myCoords.y == 0)){
     over = 1;
+}
+if (pressed == J_NOPRESS){
+    nopress = 1;
 }
 
     return  accion;

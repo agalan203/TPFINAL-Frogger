@@ -53,7 +53,6 @@ int main (void){
     int exit_game = 0;
     int exit_prgm = 0;
     int strt_game = 0;
-    int extra_pause = 0;
 
     //incializo la rpi
     init_raspi();
@@ -70,7 +69,6 @@ int main (void){
         exit_game = 0;
         strt_game = 0;
         puntajeactual = 0;
-        extra_pause = 0;
 
         //muestro el menu de inicio
         accion = output_initmenu_raspi();
@@ -86,7 +84,6 @@ int main (void){
                 strt_game = 1;              //indica que se debe comenzar el juego
                 break;
         }
-        extra_pause = 1;
 
         //inicio del juego
         if (strt_game){
@@ -111,18 +108,18 @@ int main (void){
                         evento = '0';
                         break;
                     case PLAY:
-                        if (!extra_pause){
-                            evento = 'p';
-                            estado=juego_rana_b(evento,nivel,&prana,&pmapa);
-                            accion = output_gamepaused_raspi ();    //si se puso pausa muestro el menu de pausa y veo que se eligio hacer
-                            if (accion == EXIT){
-                                istopscore();
-                                exit_game = 1;
-                            }
-                            else {
-                                evento = '0';
-                            }
+                        
+                        evento = 'p';
+                        estado=juego_rana_b(evento,nivel,&prana,&pmapa);
+                        accion = output_gamepaused_raspi ();    //si se puso pausa muestro el menu de pausa y veo que se eligio hacer
+                        if (accion == EXIT){
+                            istopscore();
+                            exit_game = 1;
                         }
+                        else {
+                            evento = '0';
+                        }
+                        
                         break;
                     case UP:
                         evento = 'u';
@@ -201,7 +198,6 @@ int main (void){
                 if(exit_game){
                     output_gameover_raspi();
                 }
-                extra_pause = 0;
             }
         }
     } while (!exit_prgm);   //el loop se ejecuta hasta que se pida cerrar el programa entero
