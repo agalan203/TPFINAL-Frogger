@@ -48,6 +48,16 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa);
  * */
 static void rana_muere(rana_be_t * prana);
 
+/*
+ * @brief Se invoca si la rana esta en un tronco previo a la actualizacion del mapa.
+ * 		Luego, si el mapa se actualiza, particularmente la linea donde esta la
+ * 		rana, entonces esta funcion actualiza la posicion de la rana.
+ * 		Ademas, luego de actualizar su posicion revisa que no este fuera del 
+ * 		mapa. Si lo esta, muere. 
+ * @param param1 prana: puntero a rana_be_t. Estructura del modulo rana, con 
+ * 		informacion de la misma.
+ * */
+static int act_rana_tronco(rana_be_t * prana);
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -61,15 +71,21 @@ void juego_rana_init_b(uint8_t vidas,uint8_t nivel){
 
 
 int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
-	int estado_rana = 0;
+	int estado_rana=0;
  	int tm_max=MAX_TIEMPO-(nivel-1)*5;
-	static int prev_nivel=1;
-	static int pausa=0;
+	uint8_t rana_tronco=0;
+	static uint8_t prev_nivel=1;
+	static uint8_t pausa=0;
 	static clock_t time_ps;
+	
+	/*Cambio de nivel*/
 	if(nivel!=prev_nivel){
-		inicia_mapa(nivel);
+		rana_be_t * prana = get_rana();
+		juego_rana_init_b(prana->vidas,nivel);
 		prev_nivel=nivel;
 	}
+
+	/*Juego en pausa*/
 	if(evento=='p'){
 		/*Pongo en pausa lo que corresponda*/
 		*mapa=get_mapa();
@@ -78,7 +94,7 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 			time_ps=clock();
 		}
 		pausa=1;
-		
+		estado_rana=PAUSA;		
 	}
 	else{
 		/*Al salir de la pausa reanudo el juego desde el tiempo que corresponde*/
@@ -93,21 +109,31 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 			}	
 			pausa=0;
 		}
-		/*Sigue el juego*/
+		/*Sigue el juego*/	
+		rana_be_t * prana; 
+		mapa_t * pmapa;
+
 		/*Actualizo estado de la rana*/
-		rana_be_t * prana;
 		prana=rana_frogger(evento,tm_max);
 
+		/*Antes de actualizar el mapa me fijo si la rana esta en un tronco*/
+		pmapa=get_mapa();
+		rana_tronco=((*pmapa)[prana->pos_y][prana->pos_x]==LOG)?1:0;
+
 		/*Actualizo mapa*/
-		mapa_t * pmapa;
 		pmapa=actualiza_mundo();
 
-		/*Comparo Rana-Mundo*/
+		/*Comparo el caso Rana-Mundo, si la rana esta un tronco*/
+		if(rana_tronco==1){
+			estado_rana=act_rana_tronco(prana);
+		}
+
+		/*Comparo Rana-Mundo, si la rana no esta en un tronco*/
 		if(prana->desborde==DESBR || prana->timeout==1){
 			rana_muere(prana);
 			estado_rana=MUERE;
 		}
-		else{	
+		else if(rana_tronco==0){		
 			estado_rana=rana_contex(prana,pmapa);
 		}
 		
@@ -128,30 +154,7 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 	int contex_rana=(*pmapa)[prana -> pos_y ][prana -> pos_x];		
 	int estado_rana;
-	carril_t * linea;
-	switch(contex_rana){
-		case LOG:	
-			/*Rana sobre TRONCO*/
-			linea=get_carril(prana->pos_y-2);/*Linea de tronco en pos_y-DEAD-HOME*/
-			if(linea->act_prev==1){
-				if(linea->direccion==IZQ_A_DER){
-					prana->pos_x++;	
-				}
-				else{	
-					prana->pos_x--;	
-				}
-				if(prana->pos_x<0 || prana->pos_x >=SIZE){
-					rana_muere(prana);
-					estado_rana=MUERE;
-				}
-				else{
-					estado_rana=VIVE;
-				}
-			}
-			else{
-				estado_rana=VIVE;
-			}
-			break;
+	switch(contex_rana){	
 		case CAR:
 		case TRUCK:
 		case WATER:
@@ -169,11 +172,38 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 		case WIN:
 			/*Rana en linea de llegada*/
 			prana->llegadas++;
-			prana->tiempo_res=prana->tiempo;
-			rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
+			prana->tiempo_res=clock() - prana->tiempo;
 			(*pmapa)[prana->pos_y][prana->pos_x]=OCUPADO;
+			rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
 			estado_rana=LLEGO;
 			break;
+	}
+	return estado_rana;
+}
+
+static int act_rana_tronco(rana_be_t * prana){
+	int estado_rana=0;
+	carril_t * linea;
+	linea=get_carril(prana->pos_y-2);/*Linea de tronco en pos_y-DEAD-HOME*/
+	if(linea->act_prev==1){
+		/*Si el tronco se movio, entonces la rana se mueve con el*/
+		if(linea->direccion==IZQ_A_DER){
+			prana->pos_x++;	
+		}
+		else{	
+			prana->pos_x--;	
+		}
+		/*Si la rana sale del mapa por estar en el tronco, muere*/
+		if(prana->pos_x<0 || prana->pos_x >=SIZE){
+			rana_muere(prana);
+			estado_rana=MUERE;
+		}
+		else{
+			estado_rana=VIVE;
+		}
+	}
+	else{
+		estado_rana=VIVE;
 	}
 	return estado_rana;
 }
