@@ -498,7 +498,6 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
         accion = get_input_raspi();
         switch (accion){
             case PLAY:
-            case RIGHT:
                 repeat = 1;
                 break;
             default:
@@ -507,7 +506,7 @@ void output_topscores_raspi (void){     //muestra los top scores en el display
     } while (repeat == 0);
 
     //copia los segundos dos top scores en el display
-    if (accion == RIGHT){
+    if (accion == PLAY){
         for (i=0;i<2;i++){
             fgets(string,5,topscores);
             for (j=0;j<4;j++){
