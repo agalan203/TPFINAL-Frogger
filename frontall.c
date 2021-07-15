@@ -1,7 +1,7 @@
 /***************************************************************************//**
   @file     +frontall.c+
   @brief    +Front End de Frogger para un display grafico con librerias Allegro+
-  @author   +Grupo 1: Albertina Galan+
+  @author   +Grupo 1: Albertina Galan, Lucia Ruiz+
  ******************************************************************************/
 
 /*******************************************************************************
@@ -10,29 +10,12 @@
 
 #include "frontall.h"
 
-// MAIN TEST : EJEMPLO
-/*
-int main(void) {
-    ALLEGRO_DISPLAY *display = NULL;
-    ALLEGRO_EVENT_QUEUE *event_queue = NULL;
-    ALLEGRO_EVENT ev;
-    action_t accion;
-    
-    init_allegro(&event_queue,&display);
-    accion = output_initmenu_all(event_queue,&ev);
-    output_world_all(&frog,&world);
+/*******************************************************************************
+ * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
+ ******************************************************************************/
 
-    //Destruir recursos empleados : SIEMPRE HACERLO EN MAIN
-    al_shutdown_font_addon();
-    al_shutdown_ttf_addon();
-    al_shutdown_primitives_addon();
-    al_shutdown_image_addon();
-    al_destroy_display(display);
-
-    return 0;
-}
-*/
 enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
+
 /*******************************************************************************
  *******************************************************************************
                         GLOBAL FUNCTION DEFINITIONS
@@ -138,24 +121,11 @@ int init_allegro (ALLEGRO_EVENT_QUEUE ** event_queue, ALLEGRO_DISPLAY ** display
         al_shutdown_font_addon();
         return -1;
     }
-    //otras cosas que haya que agregar
 
     al_register_event_source(*event_queue, al_get_keyboard_event_source()); //REGISTRAMOS EL TECLADO
 
     return 0;
 }
-/********************************* DESTROY ALLEGRO **************************************/
-    // NO funciona, hay que hacerlo en main.
-    
-    /*
-    //Destruir recursos empleados 
-    al_shutdown_primitives_addon();
-    al_shutdown_image_addon();
-    al_shutdown_font_addon();
-    al_shutdown_ttf_addon();
-    al_destroy_display(display); 
-    al_destroy_event_queue(event_queue);
-    */
 
 /********************************* OUTPUT INIT MENU ALLEGRO **************************************/
 action_t output_initmenu_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT * ev){ //muestra el menu de inicio en el display

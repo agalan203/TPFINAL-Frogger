@@ -1,48 +1,57 @@
-//MAIN ALLEGRO:
-/*****************************************************************************/
+/***************************************************************************//**
+  @file     +mainallegro.c+
+  @brief    +programa principal de FROGGER para implementacion con librerias allegro+
+  @author   +Grupo 1: Meichtry,Rodriguez,Ruiz,Galan+
+ ******************************************************************************/
 
-//INCLUDES
 #include "globalstuff.h"
 #include "frontall.h"
 #include "backend.h"
 
-/*****************************************************************************/
+/*******************************************************************************
+ * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
+ ******************************************************************************/
 
-//PROTOTIPOS DE FUNCIONES LOCALES
-void numTostring (void);
-uint16_t stringTonum (char * string);
-void istopscore (void);
-int comparescores (const void * puntaje1, const void * puntaje2);
-void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa);
-void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo);
+void numTostring (void); //transforma el puntajeactual a puntajestring
+uint16_t stringTonum (char * string); //transforma un string de 4 numeros a un entero
+void istopscore (void); //evalua si el puntajeactual entra en los top 4 puntajes y los guarda en el file correspondiente
+int comparescores (const void * puntaje1, const void * puntaje2); //compara dos puntajes para ordenarlos decrecientemente
+void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa); //transforma la estructura rana del backend a la del frontend
+void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo); //transforma el mapa del backend en el del frontend
 
-/*****************************************************************************/
-//VARIABLES GLOBALES
-uint16_t puntajeactual = 0;
-char puntajestring [5] = "0000";
+/*******************************************************************************
+ * VARIABLES WITH GLOBAL SCOPE
+ ******************************************************************************/
 
-//MAIN
+uint16_t puntajeactual = 0; //puntaje numerico actual
+char puntajestring [5] = "0000"; //puntaje actual en formato string
+
+/*******************************************************************************
+ *******************************************************************************
+                        GLOBAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
+
 int main (void){
-    //variables
+    //variables locales al main
     int nivel = 1;
     int estado;
 	char evento = '0';
-	rana_be_t * prana = get_rana();
-	mapa_t * pmapa = get_mapa();
-    mundo_t mundo;
-    rana_t rana;
+    int fila = 0;
+    int maxfila = 15;
     action_t accion;
-    rana_t auxfrog;
+	rana_be_t * prana = get_rana(); //puntero a la rana del backend
+	mapa_t * pmapa = get_mapa(); //puntero al mapa del backend
+    mundo_t mundo; //mapa del frontend
+    rana_t rana; //rana del frontend
+    rana_t auxfrog; //rana auxiliar para guardar las coordenadas anteriores y mostrar cuando muere
 
     //flags
     int exit_game = 0;
     int exit_prgm = 0;
     int strt_game = 0;
-    int fila = 0;
-    int maxfila = 15;
-
+    
     //incializo allegro
-
     //Creacion de variables para la utilizacion de allegro
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -195,7 +204,7 @@ int main (void){
     }
     //Finaliza la inicializacion de allegro
 
-    //muestro el menu de inicio
+    //inicio el loop del programa
     do{
         //resetear las variables
         nivel = 1;
@@ -208,17 +217,18 @@ int main (void){
         strt_game = 0;
         puntajeactual = 0;
 
-        //menu de inicio
+        //muestro el menu de inicio
         accion = output_initmenu_all(event_queue,&ev); 
+        //acciones posibles que se pudieron haber dado en el menu de inicio
         switch (accion){
             case TOPSCORES:
-                output_topscores_all(event_queue,&ev);
+                output_topscores_all(event_queue,&ev); //muestra los 4 highscores
                 break;
             case EXIT:
-                exit_prgm = 1;
+                exit_prgm = 1; //indica que se debe cerrar el programa entero
                 break;
             case PLAY:
-                strt_game = 1;
+                strt_game = 1; //indica que se debe comenzar el juego
                 break;
         }
 
@@ -231,12 +241,15 @@ int main (void){
             rana.estado = VIVA;
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
+            //muestro el mundo inicial en el display
             output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
+            //incio el loop del juego
             while (!exit_game){
-                //rana vieja
+                //obtengo las coordenadas de la rana en el instante anterior a actualizarlas
                 frogbcktofrnt (prana,&auxfrog,pmapa);
-                //pido e interpreto una entrada
+
+                //pido e interpreto una entrada (traduce las acciones del front para ser utilizadas por el back)
                 accion = get_input_all(event_queue,&ev);
                 switch (accion){
                     case NONE:
@@ -245,7 +258,7 @@ int main (void){
                     case PLAY:
                         evento = 'p';
                         estado=juego_rana_b(evento,nivel,&prana,&pmapa);
-                        accion = output_gamepaused_all (event_queue,&ev);
+                        accion = output_gamepaused_all (event_queue,&ev); //si se puso pausa muestro el menu de pausa y veo que se eligio hacer
                         if (accion == EXIT){
                             istopscore();
                             exit_game = 1;
@@ -271,12 +284,13 @@ int main (void){
                 //actualizo y muestro el mundo
                 estado=juego_rana_b(evento,nivel,&prana,&pmapa);
                 frogbcktofrnt (prana ,&rana, pmapa);
+                //evaluo el estado de la rana
                 if (estado == MUERE){
-                    auxfrog.estado = MUERTA;
+                    auxfrog.estado = MUERTA; //si fue atropellada lo muestro
                     output_world_all (&auxfrog, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
                     if (rana.vidas == 0){
                         istopscore();
-                        exit_game = 1;
+                        exit_game = 1; //si perdio todas las vidas lo indico para mostrar gameover y salir
                     }
                 }
                 else if (estado == VIVE){
@@ -290,12 +304,12 @@ int main (void){
 
                 //actualizo el puntaje
                 fila = rana.coords.y;
-                if (fila < maxfila){
+                if (fila < maxfila){ //se evalua si se encuentra en la mayor fila alcanzada
                     maxfila = fila;
                 }
-                if ((rana.estado == VIVA) && (rana.coords.y == maxfila) && (evento == 'u')){
-                    puntajeactual += 10;
-                    if (puntajeactual>=9999){
+                if ((rana.estado == VIVA) && (rana.coords.y == maxfila) && (evento == 'u')){ //se fija si se debe sumar puntos
+                    puntajeactual += 10; //por cada fila que avanza se suman 10 puntos
+                    if (puntajeactual>=9999){ //es el puntaje maximo obtenible, ganador absoluto del juego
                         puntajeactual = 9999;
                         numTostring();
                         istopscore();
@@ -303,7 +317,7 @@ int main (void){
                     }
                     numTostring();
                 }
-                if (estado == LLEGO){
+                if (estado == LLEGO){ //si llego del otro lado con tiempo del timer sobrante, se le suma como puntos el tiempo extra
                     puntajeactual += (int) prana->tiempo_res;
                     if (puntajeactual>=9999){
                         exit_game = 1;
@@ -312,21 +326,22 @@ int main (void){
                 }
 
                 //veo si paso de nivel
-                if (prana->llegadas == 5){
+                if (prana->llegadas == 5){ //para pasar de nivel debe completar las 5 casillas de llegada
                     nivel++;
-                    if (nivel == 6){
+                    if (nivel == 6){ //el nivel maximo es el nivel 5
                         exit_game = 1;
                         istopscore();
                     }           
                 }
+                //si perdio muestra gameover
                 if (exit_game && (accion!= EXIT)){
                     output_gameover_all(event_queue,&ev);
                 }
             }
         }
-    } while (!exit_prgm);
+    } while (!exit_prgm); //el loop se ejecuta hasta que se pida cerrar el programa entero
 
-    //destruye allegro
+    //destruye todo lo utilizado de allegro
     al_destroy_bitmap(background);
     al_destroy_bitmap(automovil1);
     al_destroy_bitmap(automovil2);
@@ -347,8 +362,11 @@ int main (void){
     return 0;
 }
 
-/*****************************************************************************/
-//DEFINICIONES DE FUNCIONES LOCALES
+/*******************************************************************************
+ *******************************************************************************
+                        LOCAL FUNCTION DEFINITIONS
+ *******************************************************************************
+ ******************************************************************************/
 
 //Transformar puntajeactual a puntajestring
 void numTostring (void){
@@ -363,7 +381,7 @@ void numTostring (void){
     puntajestring[4] = '\0';
 }
 
-//Transformar de string a numero
+//Transformar un string de 4 numeros a un entero
 uint16_t stringTonum (char * string){
     uint16_t var=0, n=1000;
     int i;
@@ -397,6 +415,8 @@ void istopscore (void){
     qsort(newscores[0], 5, sizeof(newscores)/sizeof(newscores[0]), comparescores);
 
     fclose(topscores);
+
+    //se cierra y vuelve a abrir el archivo para que comienze a escribir desde el principio del file y se sobreescriba lo anterior
     topscores = fopen("topscores.txt","r+");
     if(!topscores){
         fprintf(stderr, "failed to open topscores file!\n");
@@ -409,7 +429,7 @@ void istopscore (void){
     fclose(topscores);
 }
 
-//funcion para comparar puntajes
+//funcion para comparar puntajes para qsort
 int comparescores (const void * puntaje1, const void * puntaje2){
     char * pp1 = (char *) puntaje1;
     char * pp2 = (char *) puntaje2;
@@ -430,6 +450,7 @@ void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo){
         }
     }
 }
+
 //transforma rana backend a rana frontend
 void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa){ //esta funcion no modifica: NIVEL
     int i,j;
