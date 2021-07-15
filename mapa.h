@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <time.h>
+#include <stdio.h>
 
 /*****************************************************************************/
 //                     constante para los lados del mapa                     //
@@ -37,7 +38,7 @@
 /*****************************************************************************/
 //                 constantes los distintos objetos del mapa                 //
 /*****************************************************************************/
-enum cell_state {STREET=0, CAR, TRUCK, BUS, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
+enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 
 /*****************************************************************************/
 //   definicion del tipo de dato del mapa y de la estructura de cada carril  //
@@ -47,8 +48,8 @@ typedef u_int8_t mapa_t[SIZE][SIZE];
 
 typedef struct{
     bool direccion; //0 de izquierda a derecha, 1 viceversa
+    bool maldad;
     u_int8_t velocidad; //velocidad a la que se mueven los objetos
-    double tm_cell; //tiempo que espera en la celda para luego pasar a la siguiente
     u_int8_t size_obj; //size del objeto que esta en el carril
     u_int8_t carril; //numero de carril
     u_int8_t objeto; //que objeto es: tronco/auto/camion
@@ -56,6 +57,7 @@ typedef struct{
     int8_t pos_inic_objetos[MAX_ELEM]; //coordenada inicial de cada objeto en el carril
     clock_t tiempo_previo;
     uint8_t act_prev;
+    double tm_cell; //tiempo que espera en la celda para luego pasar a la siguiente
 }carril_t;
 
 /*****************************************************************************/
