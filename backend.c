@@ -161,7 +161,7 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 		case WIN:
 			/*Rana en linea de llegada*/
 			prana->llegadas++;
-			prana->tiempo_res=clock() - prana->tiempo;
+			prana->tiempo_res=(clock() - prana->tiempo)/(double)CLOCKS_PER_SEC;
 			(*pmapa)[prana->pos_y][prana->pos_x]=OCUPADO;
 			rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
 			estado_rana=LLEGO;
