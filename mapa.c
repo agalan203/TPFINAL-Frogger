@@ -60,6 +60,11 @@ void inicia_mapa(u_int8_t nivel){ //se crean todos los objetos de un nivel, se m
     carril_t* arr_troncos[6] = {&tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7};
     carril_t* arr_vehiculos[6] = {&vehiculo9, &vehiculo10, &vehiculo11, &vehiculo12, &vehiculo13, &vehiculo14};
     creacion_de_objetos(arr_troncos, arr_vehiculos, nivel);
+    /*Limpia celda donde llega la rana, si se pasa de nivel pasa de OCUPADO a WIN*/
+    for(i = 2; i <= 14; i= i+3){
+        mapa[1][i] = WIN;
+    }
+    /*Carga al mapa los nuevos objetos del nivel*/
     for(i = 0; i < 6; i++){
         carga_mapa(arr_troncos[i]);
         carga_mapa(arr_vehiculos[i]);
@@ -132,19 +137,19 @@ static void convertir_velocidad(carril_t* arr[6]){ //"traduce" los valores enter
     switch(arr[i] -> velocidad){
         case 0:
         case 1:
-            arr[i] -> velocidad = MUY_LENTO;
+            arr[i] -> tm_cell = MUY_LENTO;
             break;
         case 2:
-            arr[i] -> velocidad = LENTO;
+            arr[i] -> tm_cell = LENTO;
             break;
         case 3:
-            arr[i] -> velocidad = NORMAL;
+            arr[i] -> tm_cell = NORMAL;
             break;
         case 4:
-            arr[i] -> velocidad = RAPIDO;
+            arr[i] -> tm_cell = RAPIDO;
             break;
         case 5:
-            arr[i] -> velocidad = MUY_RAPIDO;
+            arr[i] -> tm_cell = MUY_RAPIDO;
             break;
         }
     }
@@ -228,7 +233,7 @@ mapa_t* actualiza_mundo(void){ //actualiza el mapa constantemente
 
 static void actualiza_linea(carril_t* linea){ //actualiza cada carril por saparado segun la velocidad de los objetos
     int i;
-    if(((clock() - (linea -> tiempo_previo))/(double)CLOCKS_PER_SEC) >= linea -> velocidad){
+    if(((clock() - (linea -> tiempo_previo))/(double)CLOCKS_PER_SEC) >= linea -> tm_cell){
         linea -> tiempo_previo = clock();
 	linea -> act_prev = 1;
         for(i = 0; i < linea -> cant_obj; i++){
