@@ -29,11 +29,11 @@
 //    constantes para las distintas velocidades de los vehiculos/troncos     //
 //         indican el tiempo que tarda un objeto en moverse un pixel         //
 /*****************************************************************************/
-#define MUY_LENTO 1.6
-#define LENTO 1.4
-#define NORMAL 1.2
-#define RAPIDO 1
-#define MUY_RAPIDO 0.5
+#define MUY_LENTO 0.35
+#define LENTO 0.3
+#define NORMAL 0.25
+#define RAPIDO 0.2
+#define MUY_RAPIDO 0.15
 
 /*****************************************************************************/
 //                 constantes los distintos objetos del mapa                 //

@@ -20,7 +20,7 @@
 
 #define POSX_I SIZE/2
 #define POSY_I SIZE-1
-#define MAX_TIEMPO 60
+#define MAX_TIEMPO 11
 
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS

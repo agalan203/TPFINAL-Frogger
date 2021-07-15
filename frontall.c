@@ -301,6 +301,7 @@ action_t output_gameover_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT *
     //imprime el high score y las instrucciones 
     fgets(string,5,topscores);
     al_draw_textf(font,al_map_rgb(235, 238, 242),WIDTH/2,45,ALLEGRO_ALIGN_CENTRE,"%s",string);
+    al_draw_textf(font,al_map_rgb(235, 238, 242),20,45,0,"%s",puntajestring);
 
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,370,ALLEGRO_ALIGN_CENTRE,"GAME OVER");
     al_draw_text(font,al_map_rgb(235, 238, 242),WIDTH/2,570,ALLEGRO_ALIGN_CENTRE,"Press escape to exit");

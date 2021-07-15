@@ -121,33 +121,44 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
     
     jcoord_t myCoords;
     action_t accion = NONE;
+    static int over = 1;
 
     //primero actualizo las coordenadas medidas
     joy_update();
     //luego las guardo en myCoords
     myCoords = joy_get_coord();
 
-    if (joy_get_switch()== J_PRESS) {
+    switch (joy_get_switch()){
+    case J_PRESS:
         accion = PLAY;
-    }
-    else if (joy_get_switch()== J_NOPRESS) {    //solo se tienen en cuenta las acciones si el joystick pasa una pos dada
-
-        if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
-            accion = RIGHT;
-        }
-        else if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x < -THRESHOLD) ){
-            accion = LEFT;
-        }
-        else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y > THRESHOLD) ){
-            accion = UP;
-        }
-        else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y < -THRESHOLD) ){
-            accion = DOWN;
+        break;
+    case J_NOPRESS:
+        if (over){
+            if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
+                accion = RIGHT;
+            }
+            else if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x < -THRESHOLD) ){
+                accion = LEFT;
+            }
+            else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y > THRESHOLD) ){
+                accion = UP;
+            }
+            else if ( (myCoords.x < THRESHOLD) && (myCoords.x > -THRESHOLD) && (myCoords.y < -THRESHOLD) ){
+                accion = DOWN;
+            }
+            else {
+                accion = NONE;
+            }
         }
         else {
             accion = NONE;
         }
-    }
+        over = 0;
+        break;
+}
+if ((myCoords.x == 0) && (myCoords.y == 0)){
+    over = 1;
+}
 
     return  accion;
 }
@@ -186,6 +197,9 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
             disp_write(myPoint,D_ON);        
         }
     }
+    
+    disp_write(frog->coords, D_OFF);
+    
     disp_update();
 }
 
@@ -199,9 +213,6 @@ void output_frog_raspi (rana_t * rana){ //se debe invocar cada una cantidad esta
             disp_write(rana->coords, D_ON);
         }
         disp_update();
-    }
-    else {
-        output_dead_raspi();
     }
 }
 

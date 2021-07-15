@@ -282,8 +282,6 @@ int main (void){
                         }
                         break;
                     case UP:
-
-			mostrar(pmapa,prana);
                         evento = 'u';
                         break;
                     case DOWN:
@@ -339,6 +337,7 @@ int main (void){
                         exit_game = 1;
                     }
                     numTostring();
+                    maxfila = 15;
                 }
 
                 //veo si paso de nivel
