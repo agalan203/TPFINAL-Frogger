@@ -21,7 +21,7 @@
 /*Constantes del modulo*/
 #define NDESBR 0
 #define DESBR 1
-#define TITILE 0.5 
+#define TITILE 1
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
@@ -33,8 +33,7 @@
  * 	    campo4 vidas: cantidad de vidas de la rana.
  * 	    campo5 llegadas: cantidas de llegas a la meta de la rana.
  * 	    campo6 timeout: indica si paso el tiempo maximo de vida por llegada
- * 	    campo7 tiempo: tiempo de inicio en salida.
- *		campo8 tiempo_res: tiempo sobrante al llegar a casa
+ * 	    campo6 tiempo: tiempo de inicio en salida.
  *
  * */
 typedef struct{
@@ -79,11 +78,6 @@ rana_be_t * rana_frogger(char mov,uint8_t tiempo_max);
  */
 void rana_init(uint8_t posx_in,uint8_t posy_in,uint8_t vidas_in,uint8_t llegadas_in);
 
-
-/**
- * @brief: Devuelve el puntero a la estructura rana
- * @return: puntero a rana.
- * */
 rana_be_t * get_rana(void);
 /*******************************************************************************
  ******************************************************************************/
