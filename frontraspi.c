@@ -130,6 +130,7 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
     //luego las guardo en myCoords
     myCoords = joy_get_coord();
     pressed = joy_get_switch();
+    //evaluo si se presiono o no el joystick
     switch (pressed){
         case J_PRESS:
             if (nopress){
@@ -141,6 +142,7 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
             nopress = 0;
             break;
         case J_NOPRESS:
+        //obtengo el sentido en que se movio el joystick
             if (over){
                 if ( (myCoords.y < THRESHOLD) && (myCoords.y > -THRESHOLD) && (myCoords.x > THRESHOLD) ){
                     accion = RIGHT;
@@ -164,12 +166,14 @@ action_t get_input_raspi (void){ //devuelve la accion realizada, action_t es una
             over = 0;
             break;
     }
-if ((myCoords.x == 0) && (myCoords.y == 0)){
-    over = 1;
-}
-if (pressed == J_NOPRESS){
-    nopress = 1;
-}
+
+    //guarda contra la sensibilidad del joystick. asi, una misma accion no es interpretada mas de una vez seguida
+    if ((myCoords.x == 0) && (myCoords.y == 0)){
+        over = 1;
+    }
+    if (pressed == J_NOPRESS){
+        nopress = 1;
+    }
 
     return  accion;
 }
