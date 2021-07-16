@@ -188,29 +188,29 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
         arr_troncos[i] -> velocidad = rand() % cant_vel + 1;
         switch(arr_troncos[i] -> size_obj){ //define el espacio libre que puede haber entre los troncos dependiendo del size de los mismos
             case 4:
-                arr_troncos[i] -> cant_obj = rand() % 2 + 1;
-                espacio_libre = (arr_troncos[i] -> cant_obj == 2) ? 3 : 0;
-                break;
-            case 3:
                 arr_troncos[i] -> cant_obj = rand() % 3 + 1;
                 espacio_libre = (arr_troncos[i] -> cant_obj == 3) ? 2 : 3;
                 break;
+            case 3:
+                arr_troncos[i] -> cant_obj = rand() % 4 + 2;
+                espacio_libre = (arr_troncos[i] -> cant_obj == 4) ? 1 : ((arr_troncos[i] -> cant_obj == 3 ) ? 2 : 4);
+                break;
             case 2:
-                arr_troncos[i] -> cant_obj = rand() % 3 + 1;
-                espacio_libre = rand() % 3 + 2;
+                arr_troncos[i] -> cant_obj = rand() % 3 + 3;
+                espacio_libre = (arr_troncos[i] -> cant_obj == 5) ? 1 : ((arr_troncos[i] -> cant_obj == 4 ) ? 2 : 4);
                 break;
         }
 
         if(arr_troncos[i] -> direccion == IZQ_A_DER){ //funcionamiento analogo a crear_vehiculos
             arr_troncos[i] -> pos_inic_objetos[0] = espacio_libre - 1;
             for(j = 1; j < arr_troncos[i] -> cant_obj; j++){
-                arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] - espacio_libre - arr_troncos[i] -> size_obj - rand() % 2;
+                arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] - espacio_libre - arr_troncos[i] -> size_obj;
             }
         }
         else{
             arr_troncos[i] -> pos_inic_objetos[0] = (SIZE - 1) - (espacio_libre - 1);
             for(j = 1; j < arr_troncos[i] -> cant_obj; j++){
-                arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] + espacio_libre + arr_troncos[i] -> size_obj + rand() % 2;
+                arr_troncos[i] -> pos_inic_objetos[j] = arr_troncos[i] -> pos_inic_objetos[j-1] + espacio_libre + arr_troncos[i] -> size_obj;
             }
         }
         
