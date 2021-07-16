@@ -404,7 +404,7 @@ action_t output_topscores_all (ALLEGRO_EVENT_QUEUE * event_queue, ALLEGRO_EVENT 
 }
 
 /********************************* OUTPUT WORLD ALLEGRO **************************************/
-int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * background, ALLEGRO_BITMAP * automovil1, ALLEGRO_BITMAP * automovil2, ALLEGRO_BITMAP * camion, ALLEGRO_BITMAP * log2, ALLEGRO_BITMAP * log3, ALLEGRO_BITMAP * log4, ALLEGRO_BITMAP * ranita, ALLEGRO_BITMAP * ranamuerta, ALLEGRO_BITMAP * lives, ALLEGRO_BITMAP * llego){  //muestra el mundo en un momento dado en el display
+int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * background, ALLEGRO_BITMAP * automovil1, ALLEGRO_BITMAP * automovil2, ALLEGRO_BITMAP * camion, ALLEGRO_BITMAP * log1, ALLEGRO_BITMAP * log2, ALLEGRO_BITMAP * log3, ALLEGRO_BITMAP * log4, ALLEGRO_BITMAP * ranita, ALLEGRO_BITMAP * ranamuerta, ALLEGRO_BITMAP * lives, ALLEGRO_BITMAP * llego){  //muestra el mundo en un momento dado en el display
     FILE * topscores;
     char string[5];
     int i,j;
@@ -459,6 +459,8 @@ int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * backgroun
                     }
                     switch (contlogs){
                         case 1:
+                            al_draw_bitmap(log1,j*ITEM,(i+1)*ITEM,0);
+                            break;
                         case 2:
                             al_draw_bitmap(log2,j*ITEM,(i+1)*ITEM,0);
                             break;

@@ -61,6 +61,7 @@ int main (void){
     ALLEGRO_BITMAP * automovil1;
     ALLEGRO_BITMAP * automovil2;
     ALLEGRO_BITMAP * camion;
+    ALLEGRO_BITMAP * log1;
     ALLEGRO_BITMAP * log2;
     ALLEGRO_BITMAP * log3;
     ALLEGRO_BITMAP * log4;
@@ -106,6 +107,17 @@ int main (void){
         return -1;
     }
 
+    log1 = al_load_bitmap ("all_images/log1.png");
+    if(!log1)
+    {
+        fprintf(stderr, "failed to load log1 bitmap!\n");
+        al_destroy_bitmap(background);
+        al_destroy_bitmap(automovil1);
+        al_destroy_bitmap(automovil2);
+        al_destroy_bitmap(camion);
+        return -1;
+    }
+
     log2 = al_load_bitmap ("all_images/log2.png");
     if(!log2)
     {
@@ -114,6 +126,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         return -1;
     }
 
@@ -125,6 +138,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         return -1;
     }
@@ -137,6 +151,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         al_destroy_bitmap(log3);
         return -1;
@@ -150,6 +165,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         al_destroy_bitmap(log3);
         al_destroy_bitmap(log4);
@@ -164,6 +180,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         al_destroy_bitmap(log3);
         al_destroy_bitmap(log4);
@@ -179,6 +196,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         al_destroy_bitmap(log3);
         al_destroy_bitmap(log4);
@@ -195,6 +213,7 @@ int main (void){
         al_destroy_bitmap(automovil1);
         al_destroy_bitmap(automovil2);
         al_destroy_bitmap(camion);
+        al_destroy_bitmap(log1);
         al_destroy_bitmap(log2);
         al_destroy_bitmap(log3);
         al_destroy_bitmap(log4);
@@ -243,7 +262,7 @@ int main (void){
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
             //muestro el mundo inicial en el display
-            output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+            output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log1,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
             //incio el loop del juego
             while (!exit_game){
@@ -289,7 +308,7 @@ int main (void){
                 //evaluo el estado de la rana
                 if (estado == MUERE){
                     auxfrog.estado = MUERTA; //si fue atropellada lo muestro
-                    output_world_all (&auxfrog, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                    output_world_all (&auxfrog, &mundo,background,automovil1,automovil2,camion,log1,log2,log3,log4,ranita,ranamuerta,lives,llego);
                     if (rana.vidas == 0){
                         istopscore();
                         exit_game = 1; //si perdio todas las vidas lo indico para mostrar gameover y salir
@@ -302,7 +321,7 @@ int main (void){
                 mapbcktofrnt (pmapa, &mundo);
                 //el mundo se actualiza solo si no se pidio salir
                 if (!exit_game){
-                    output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                    output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log1,log2,log3,log4,ranita,ranamuerta,lives,llego);
                 }
 
                 //actualizo el puntaje
@@ -350,6 +369,7 @@ int main (void){
     al_destroy_bitmap(automovil1);
     al_destroy_bitmap(automovil2);
     al_destroy_bitmap(camion);
+    al_destroy_bitmap(log1);
     al_destroy_bitmap(log2);
     al_destroy_bitmap(log3);
     al_destroy_bitmap(log4);
