@@ -61,7 +61,7 @@ void juego_rana_init_b(uint8_t vidas,uint8_t nivel){
 
 int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 	int estado_rana=0;
- 	int tm_max=MAX_TIEMPO-(nivel-1)*5;
+ 	int tm_max=MAX_TIEMPO-(nivel-1)*SEG_POR_NIV;
 	uint8_t rana_tronco=0;
 	static uint8_t prev_nivel=1;
 	static uint8_t pausa=0;
@@ -94,8 +94,10 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 			carril_t * linea;
 			for(i=0;i<cant_obj;i++){	/*Recorre las lineas donde hay objetos (SIZE-2*SAFE-HOME-DEAD)*/
 				linea=get_carril(i);	
-				linea->tiempo_previo+=(clock()-time_ps);
+				linea->tiempo_previo+=(clock()-time_ps);	
 			}	
+			rana_be_t * prana=get_rana();
+			prana->tiempo+=(clock()-time_ps);	
 			pausa=0;
 		}
 		/*Sigue el juego*/	
@@ -118,7 +120,7 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 		}
 
 		/*Comparo Rana-Mundo, si la rana no esta en un tronco*/
-		if(prana->desborde==DESBR || prana->timeout==1){
+		if(prana->desborde==DESBR){
 			rana_muere(prana);
 			estado_rana=MUERE;
 		}
@@ -161,7 +163,12 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 		case WIN:
 			/*Rana en linea de llegada*/
 			prana->llegadas++;
-			prana->tiempo_res=(clock() - prana->tiempo)/(double)CLOCKS_PER_SEC;
+			if(prana->timeout==1){
+				prana->tiempo_res=0;
+			}
+			else{
+				prana->tiempo_res=(clock() - prana->tiempo)/(double)CLOCKS_PER_SEC;
+			}
 			(*pmapa)[prana->pos_y][prana->pos_x]=OCUPADO;
 			rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
 			estado_rana=LLEGO;
