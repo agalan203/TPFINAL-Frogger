@@ -19,20 +19,6 @@ int comparescores (const void * puntaje1, const void * puntaje2); //compara dos 
 void frogbcktofrnt (rana_be_t * prana , rana_t * rana, mapa_t * pmapa); //transforma la estructura rana del backend a la del frontend
 void mapbcktofrnt (mapa_t * pmapa, mundo_t * mundo); //transforma el mapa del backend en el del frontend
 
-
-void mostrar(mapa_t * pmapa,rana_be_t * prana);
-void mostrar(mapa_t * pmapa,rana_be_t * prana){
-	int j,i;
-	for(i = 0; i < SIZE; i++){
-		for(j = 0; j < SIZE; j++){
-			printf("%d ", (*pmapa)[i][j]);
-		}
-		printf("\n");
-	}
-//	printf("\n");	
-	printf("POSX: %d ; POSY: %d ; vidas: %d ; llegadas: %d\n",prana->pos_x,prana->pos_y,prana->vidas, prana->llegadas);
-}
-
 /*******************************************************************************
  * VARIABLES WITH GLOBAL SCOPE
  ******************************************************************************/
@@ -50,9 +36,9 @@ int main (void){
     //variables locales al main
     int nivel = 1;
     int estado;
-	char evento = '0';
     int fila = 0;
     int maxfila = 15;
+	char evento = '0';
     action_t accion;
 	rana_be_t * prana = get_rana(); //puntero a la rana del backend
 	mapa_t * pmapa = get_mapa(); //puntero al mapa del backend
@@ -65,7 +51,8 @@ int main (void){
     int exit_prgm = 0;
     int strt_game = 0;
     
-    //incializo allegro
+    //Inicializacion para la implementacion de librerias allegro
+
     //Creacion de variables para la utilizacion de allegro
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
@@ -260,6 +247,7 @@ int main (void){
 
             //incio el loop del juego
             while (!exit_game){
+
                 //obtengo las coordenadas de la rana en el instante anterior a actualizarlas
                 frogbcktofrnt (prana,&auxfrog,pmapa);
 
@@ -312,6 +300,7 @@ int main (void){
                 }
                 rana.nivel = (uint8_t) nivel + '0';
                 mapbcktofrnt (pmapa, &mundo);
+                //el mundo se actualiza solo si no se pidio salir
                 if (!exit_game){
                     output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log2,log3,log4,ranita,ranamuerta,lives,llego);
                 }

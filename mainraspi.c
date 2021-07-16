@@ -108,7 +108,6 @@ int main (void){
                         evento = '0';
                         break;
                     case PLAY:
-                        
                         evento = 'p';
                         estado=juego_rana_b(evento,nivel,&prana,&pmapa);
                         accion = output_gamepaused_raspi ();    //si se puso pausa muestro el menu de pausa y veo que se eligio hacer
@@ -118,8 +117,7 @@ int main (void){
                         }
                         else {
                             evento = '0';
-                        }
-                        
+                        }  
                         break;
                     case UP:
                         evento = 'u';
