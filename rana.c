@@ -33,6 +33,7 @@ void rana_init(uint8_t posx_in,uint8_t posy_in,uint8_t vidas_in,uint8_t llegadas
 	rana_frg.tiempo=clock();
 	rana_frg.timeout=0;
 	rana_frg.on_off=0;
+	rana_frg.tiempo_onoff=clock();
 }
 
 rana_be_t * rana_frogger(char mov,uint8_t tiempo_max){
@@ -64,9 +65,9 @@ rana_be_t * rana_frogger(char mov,uint8_t tiempo_max){
 	if((clock()-rana_frg.tiempo)/(double)CLOCKS_PER_SEC >= tiempo_max){
 		rana_frg.timeout=1;
 	}
-	if((clock()-rana_frg.tiempo)/(double)CLOCKS_PER_SEC >= TITILE){
+	if((clock()-rana_frg.tiempo_onoff)/(double)CLOCKS_PER_SEC >= TITILE){
 		rana_frg.on_off=(rana_frg.on_off==0)?1:0;
-			
+		rana_frg.tiempo_onoff = clock();
 	}
 	return &rana_frg;
 }

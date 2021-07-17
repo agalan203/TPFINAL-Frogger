@@ -37,15 +37,16 @@
  *
  * */
 typedef struct{
-	 uint8_t pos_x;
-	 uint8_t pos_y;
-	 uint8_t desborde;
-	 uint8_t vidas;
-	 uint8_t llegadas;
-	 uint8_t timeout;
-	 uint8_t on_off;
-	 clock_t tiempo;
-	 clock_t tiempo_res;
+	uint8_t pos_x;
+	uint8_t pos_y;
+	uint8_t desborde;
+	uint8_t vidas;
+	uint8_t llegadas;
+	uint8_t timeout;
+	uint8_t on_off;
+	clock_t tiempo;
+	clock_t tiempo_res;
+	clock_t tiempo_onoff;
 }rana_be_t;	
 
 /*******************************************************************************
