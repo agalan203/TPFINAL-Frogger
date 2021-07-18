@@ -54,13 +54,10 @@ action_t get_input_raspi (void);
 /**
  * @brief OUTPUT_WORLD_RASPI: muestra el mundo en un momento dado por display
  * @param mundo Puntero al mapa del mundo
+ * @param rana Puntero a la rana (jugador)
+ * 
 */
 void output_world_raspi (mundo_t * mundo, rana_t * frog);
-/**
- * @brief OUTPUT_WORLD_RASPI: muestra la rana en un momento dado por display. La rana titila. Debe ser invocada periodicamente con el rana.encendida cambiado
- * @param rana Puntero a la rana (jugador)
-*/
-void output_frog_raspi (rana_t * rana);
 /**
  * @brief OUTPUT_INITMENU_RASPI: muestra el menu de inicio del juego por display
  * @return devuelve la accion a realizar (PLAY AGAIN- EXIT GAME)

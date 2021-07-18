@@ -1,12 +1,14 @@
 /****************************************************************************
   @file     mapa.h
-  @brief    Header del mapa del juego. 
+  @brief    Creacion y actualizacion constante del mapa de juego, de los troncos
+            y de los vehiculos
+  @author   Grupo 1: Cristian Meichtry, Juan Martin Rodriguez
 *****************************************************************************/
 #ifndef _MAPA_H_
 #define _MAPA_H_
 
 /*****************************************************************************/
-//                               Headers FIles                               //
+//                               Headers Files                               //
 /*****************************************************************************/
 #include <stdlib.h>
 #include <stdint.h>
@@ -17,20 +19,20 @@
 /*****************************************************************************/
 //                     constante para los lados del mapa                     //
 /*****************************************************************************/
-#define SIZE 16 //constante para los lados del mapa
-#define MAX_ELEM 4
+#define SIZE 16
+
 /*****************************************************************************/
-//                constantes para los sentidos de los carriles               //
+//                        constantes para los carriles                       //
 /*****************************************************************************/
-#define IZQ_A_DER 0 
-#define DER_A_IZQ 1
+#define IZQ_A_DER 0 //los objetos se desplazan de izquierda a derecha
+#define DER_A_IZQ 1 //los objetos se desplazan de derecha a izquierda
+#define MAX_ELEM 4 //constante para indicar la cantidad maxima de objetos en un carril 
 
 /*****************************************************************************/
 //    constantes para las distintas velocidades de los vehiculos/troncos     //
-//         indican el tiempo que tarda un objeto en moverse un pixel         //
 /*****************************************************************************/
 
-#if (__WORDSIZE == 64)
+#if (__WORDSIZE == 64) //velocidades para el juego en allegro
 
 #define MUY_LENTO 0.35
 #define LENTO 0.3
@@ -38,7 +40,7 @@
 #define RAPIDO 0.2
 #define MUY_RAPIDO 0.15
 
-#elif (__WORDSIZE == 32)
+#elif (__WORDSIZE == 32) //velocidades para el juego en Raspberry Pi
 
 #define MUY_LENTO 0.17
 #define LENTO 0.13
@@ -74,7 +76,7 @@ typedef struct{
 }carril_t;
 
 /*****************************************************************************/
-//                      prototipos de funciones publicas                     //
+//                      prototipos de funciones globales                     //
 /*****************************************************************************/
 
 /*****************************************************************************
@@ -82,7 +84,6 @@ typedef struct{
  * ni obstaculos 
 **/
 void creacion_mapa(void);
-/*****************************************************************************/
 
 /*****************************************************************************
  * @brief inicia_mapa: Debe invocarse al comenzar un nivel. Inicia el mapa del
@@ -90,7 +91,6 @@ void creacion_mapa(void);
  * @param nivel: El nivel que se va a ejecutar en el momento del llamado 
 **/
 void inicia_mapa(u_int8_t nivel);
-/*****************************************************************************/
 
 /*****************************************************************************
  * @brief actualiza_mundo: actualiza el mapa linea por linea constantemente
@@ -100,7 +100,7 @@ mapa_t * actualiza_mundo(void);
 
 /*****************************************************************************
  * @brief get_carril: busca un puntero a la estructura de un carril y lo devuelve 
- * @param param1 linea: numero de linea a obtener 
+ * @param linea: numero de linea a obtener 
  * @return: puntero a carril
 **/
 carril_t * get_carril(uint8_t linea);
