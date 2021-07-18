@@ -51,7 +51,7 @@
 #endif
 
 /*****************************************************************************/
-//                 constantes los distintos objetos del mapa                 //
+//              constantes para los distintos objetos del mapa               //
 /*****************************************************************************/
 enum cell_state {STREET=0, CAR, TRUCK, WATER, LOG, SAFE, DEAD, WIN, OCUPADO};
 
