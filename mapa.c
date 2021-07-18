@@ -1,8 +1,21 @@
+/***************************************************************************//**
+  @file     mapa.c
+  @brief    Creacion y actualizacion constante del mapa de juego, de los troncos
+            y de los vehiculos
+  @author   Grupo 1: Cristian Meichtry, Juan Martin Rodriguez
+ ******************************************************************************/
+
+/*****************************************************************************/
+//                               Header Files                                //
+/*****************************************************************************/
 #include "mapa.h"
 
+/*****************************************************************************/
+//                      definicion de variables locales                      //
+/*****************************************************************************/
 static mapa_t mapa;
 
-//inicializacion de las estructuras de cada carril (no se inicializaron todos los campos)
+//definicion e inicializacion de las estructuras de cada carril (no se inicializaron todos los campos)
 static carril_t tronco2 = {0, 0, 1, 1, 2, LOG};
 static carril_t tronco3 = {0, 0, 1, 1, 3, LOG};
 static carril_t tronco4 = {0, 0, 1, 1, 4, LOG};
@@ -17,12 +30,53 @@ static carril_t vehiculo12 = {0, 1, 1, 1, 12, CAR};
 static carril_t vehiculo13 = {0, 1, 1, 1, 13, CAR};
 static carril_t vehiculo14 = {0, 1, 1, 1, 14, CAR};
 
+/*****************************************************************************/
+//                      prototipos de funciones locales                      //
+/*****************************************************************************/
+
+/*****************************************************************************
+ * @brief creacion_de_objetos: actualiza el mapa linea por linea constantemente
+ * @param arr_troncos: arreglo de estructuras de troncos 
+ * @param arr_vehiculos: arreglo de estructuras de vehiculos 
+ * @param nivel: nivel de juego actual
+**/
 static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculos[6], u_int8_t nivel);
+
+/*****************************************************************************
+ * @brief convertir_velocidad: actualiza el mapa linea por linea constantemente
+ * @param arr: arreglo de estructuras de troncos o de vehiculos
+**/
 static void convertir_velocidad(carril_t* arr[6]);
+
+/*****************************************************************************
+ * @brief crear_vehiculos: actualiza el mapa linea por linea constantemente
+ * @param arr_vehiculos: arreglo de estructuras de vehiculos 
+ * @param cant_vel: cantidad de velocidades que va a haber en ese nivel 
+**/
 static void crear_vehiculos(carril_t* arr_vehiculos[6], int cant_vel);
+
+/*****************************************************************************
+ * @brief crear_troncos: actualiza el mapa linea por linea constantemente
+ * @param arr_troncos: arreglo de estructuras de troncos 
+ * @param cant_vel: cantidad de velocidades que va a haber en ese nivel 
+**/
 static void crear_troncos(carril_t* arr_troncos[6], int cant_vel);
+
+/*****************************************************************************
+ * @brief actualiza_linea: actualiza el mapa linea por linea constantemente
+ * @param carril: carril que se quiere actualizar
+**/
 static void actualiza_linea(carril_t* carril);
+
+/*****************************************************************************
+ * @brief carga_mapa: actualiza el mapa linea por linea constantemente
+ * @param linea: carril que se quiere cargar 
+**/
 static void carga_mapa(carril_t* linea);
+
+/*****************************************************************************/
+//                     definicion de funciones globales                      //
+/*****************************************************************************/
 
 void creacion_mapa(void){ //crea el mapa pero sin ningun vehiculo, mapa base
     int i, j; //variables para contadores
@@ -60,11 +114,11 @@ void inicia_mapa(u_int8_t nivel){ //se crean todos los objetos de un nivel, se m
     carril_t* arr_troncos[6] = {&tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7};
     carril_t* arr_vehiculos[6] = {&vehiculo9, &vehiculo10, &vehiculo11, &vehiculo12, &vehiculo13, &vehiculo14};
     creacion_de_objetos(arr_troncos, arr_vehiculos, nivel);
-    /*Limpia celda donde llega la rana, si se pasa de nivel pasa de OCUPADO a WIN*/
+    //Limpia celda donde llega la rana, si se pasa de nivel pasa de OCUPADO a WIN
     for(i = 2; i <= 14; i= i+3){
         mapa[1][i] = WIN;
     }
-    /*Carga al mapa los nuevos objetos del nivel*/
+    //Carga al mapa los nuevos objetos del nivel
     for(i = 0; i < 6; i++){
         carga_mapa(arr_troncos[i]);
         carga_mapa(arr_vehiculos[i]);
@@ -82,6 +136,24 @@ carril_t * get_carril(uint8_t linea){
 mapa_t * get_mapa(void){
 	return &mapa;
 }
+
+mapa_t* actualiza_mundo(void){ //actualiza el mapa constantemente
+    int i;
+    carril_t* carriles[12] = {
+        &tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,
+        &vehiculo9, &vehiculo10, &vehiculo11, &vehiculo12, &vehiculo13, &vehiculo14
+    };
+    
+    for(i = 0; i < 12; i++){
+        actualiza_linea(carriles[i]); //actualiza linea por linea
+    }
+
+    return &mapa;
+}
+
+/*****************************************************************************/
+//                      definicion de funciones locales                      //
+/*****************************************************************************/
 
 static void creacion_de_objetos(carril_t* arr_troncos[6], carril_t* arr_vehiculos[6], u_int8_t nivel){ //se crea cada objeto con sus atributos correspondientes
     int i;
@@ -217,20 +289,6 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
     }
 }
 
-mapa_t* actualiza_mundo(void){ //actualiza el mapa constantemente
-    int i;
-    carril_t* carriles[12] = {
-        &tronco2, &tronco3, &tronco4, &tronco5, &tronco6, &tronco7,
-        &vehiculo9, &vehiculo10, &vehiculo11, &vehiculo12, &vehiculo13, &vehiculo14
-    };
-    
-    for(i = 0; i < 12; i++){
-        actualiza_linea(carriles[i]); //actualiza linea por linea
-    }
-
-    return &mapa;
-}
-
 static void actualiza_linea(carril_t* linea){ //actualiza cada carril por saparado segun la velocidad de los objetos
     int i;
     if(((clock() - (linea -> tiempo_previo))/(double)CLOCKS_PER_SEC) >= linea -> tm_cell){
@@ -270,7 +328,7 @@ static void carga_mapa(carril_t* linea){ //carga el mapa despues de cada actuali
                 }
                 else{
                     mapa[linea -> carril][SIZE - 1] = (linea -> objeto == LOG) ? WATER : STREET;
-                    linea -> pos_inic_objetos[i] = -1;
+                    linea -> pos_inic_objetos[i] = -2;
                 }
             }
             if(linea -> pos_inic_objetos[i] - linea -> size_obj >= 0){
