@@ -94,9 +94,13 @@ int main (void){
             rana.estado = VIVA;
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
+            //reseteo el puntaje actual
+            puntajeactual = 0;
+            numTostring();
             //muestro el mundo inicial en el display
             output_world_raspi(&mundo,&rana);
             output_frog_raspi(&rana);
+            
 
             //incio el loop del juego
             while (!exit_game){

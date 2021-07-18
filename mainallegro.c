@@ -261,6 +261,9 @@ int main (void){
             rana.estado = VIVA;
             rana.nivel = nivel;
             mapbcktofrnt (pmapa, &mundo);
+            //reseteo el puntaje actual
+            puntajeactual = 0;
+            numTostring();
             //muestro el mundo inicial en el display
             output_world_all (&rana, &mundo,background,automovil1,automovil2,camion,log1,log2,log3,log4,ranita,ranamuerta,lives,llego);
 
