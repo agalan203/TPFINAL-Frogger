@@ -467,7 +467,7 @@ int output_world_all (rana_t * rana, mundo_t * mundo, ALLEGRO_BITMAP * backgroun
                         case 3:
                             al_draw_bitmap(log3,j*ITEM,(i+1)*ITEM,0);
                             break;
-                        default:
+                        case 4:
                             al_draw_bitmap(log4,j*ITEM,(i+1)*ITEM,0);
                             break;
                     }
