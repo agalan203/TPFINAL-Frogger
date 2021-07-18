@@ -17,31 +17,13 @@
 /*****************************************************************************/
 #define CANTCOLS 16
 #define CANTFILS 16
-/*Constantes del modulo*/
-#define NDESBR 0
-#define DESBR 1
-#define TITILE 0.003
-/*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
- ******************************************************************************/
-/* 
- * Estructura de la rana del backend
- * @campos: campo1 pos_x: posicion de la rana en coordenada x.
- * 	    campo2 pos_y: posicion de la rana en coordenada y.
- * 	    campo3 desborde: permite indicar desborde de la rana en el rio.
- * 	    campo4 vidas: cantidad de vidas de la rana.
- * 	    campo5 llegadas: cantidas de llegas a la meta de la rana.
- * 	    campo6 timeout: indica si paso el tiempo maximo de vida por llegada
- * 	    campo6 tiempo: tiempo de inicio en salida.
- *
- * */
 
 /*****************************************************************************/
 //                           constantes del modulo                           //
 /*****************************************************************************/
 #define NDESBR 0 //indica que no hubo desborde
 #define DESBR 1 //indica que hubo desborde
-#define TITILE 0.1 //frecuencia con la que titila el led de la rana en Raspberry PI
+#define TITILE 0.03 //frecuencia con la que titila el led de la rana en Raspberry PI
 
 /*****************************************************************************/
 //                         Estructura del objeto rana                        //
