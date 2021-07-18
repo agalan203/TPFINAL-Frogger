@@ -4,60 +4,62 @@
   @author   +Grupo 1: Cristian Meichtry, Juan Martin Rodriguez+
  ******************************************************************************/
 
-/*******************************************************************************
- * INCLUDE HEADER FILES
- ******************************************************************************/
-
+/*****************************************************************************/
+//                               Header Files                                //
+/*****************************************************************************/
 #include "backend.h"
 
-/*******************************************************************************
- * FUNCTION PROTOTYPES FOR PRIVATE FUNCTIONS WITH FILE LEVEL SCOPE
- ******************************************************************************/
-/*
- * @brief Esta funcion analiza el entorno de la rana, actualizando las vidas si muere,
- * 		las llegadas si llega a casa y la posicion si esta en un tronco.
- * 		Dependiendo el entorno se le actualizan los atributos de posicion. Si
- * 		murio vuelve al incio y se resetea contador, sino mantiene valores 
- * 		previos.
- * @param param1 prana: puntero a rana_be_t. Estructura del modulo rana, con 
- * 		informacion de la misma.
- * @param param2 pmapa: puntero a mapa_t. Matriz del modulo mapa, con ubicacion deobjetos
- * @return Si la rana murio, devuelve MUERE.
- * 	   Si la rana vive, devuelve VIVE.
- * 	   Si la rana llego a casa, devuelve LLEGO.
- * */
+/*****************************************************************************/
+//                      prototipos de funciones locales                      //
+/*****************************************************************************/
+
+ /*****************************************************************************
+ * @brief rana_contex: analiza el entorno de la rana, actualiza las vidas y 
+ *					   lleva la rana al inicio si esta muere, actualiza las
+ * 					   llegadas si llega a casa y la posicion si esta en un tronco.
+ * @param prana: puntero a estructura con informacion de la rana 
+ * @param pmapa: puntero al mapa de juego con los objetos moviendose
+ * @return: Devuelve el estado de la rana.
+ *          la rana murio, devuelve MUERE
+ *          la rana vive, devuelve VIVE
+ *          la rana llego al otro lado, devuelve LLEGO
+**/
 static int rana_contex(rana_be_t * prana,mapa_t * pmapa);
 
 /*
  * @brief Cuando muere la rana, esta funcion se encarga de actualizar las vidas,
- * 		y dar una nueva posicion de origen a la rana. Tambien resetea su 
- * 		timer de vida.
+ * 		y dar una nueva posicion de origen a la rana. Tambien resetea el 
+ * 		tiempo de bonus.
  * @param param1 prana: puntero a rana_be_t. Estructura del modulo rana, con 
  * 		informacion de la misma.
  * */
+
+ /*****************************************************************************
+ * @brief rana_muere: Cuando muere la rana, se actualizan las vidas,
+ * 					  y se lleva a la rana al lugar de origen. Tambien 
+ *                    se resetea el tiempo de bonus.
+ * @param prana: puntero a estructura con informacion de la rana
+**/
 static void rana_muere(rana_be_t * prana);
 
-/*
- * @brief Se invoca si la rana esta en un tronco previo a la actualizacion del mapa.
- * 		Luego, si el mapa se actualiza, particularmente la linea donde esta la
- * 		rana, entonces esta funcion actualiza la posicion de la rana.
- * 		Ademas, luego de actualizar su posicion revisa que no este fuera del 
- * 		mapa. Si lo esta, muere. 
- * @param param1 prana: puntero a rana_be_t. Estructura del modulo rana, con 
- * 		informacion de la misma.
- * */
+ /*****************************************************************************
+ * @brief act_rana_tronco: Se invoca si la rana esta sobre un tronco previo a la 
+ *						   actualizacion del mapa. Luego, cuando el mapa se actualiza,
+ *						   tambien se actualiza la posicion de la rana. Ademas, 
+ *						   luego de actualizar su posicion revisa que no este fuera 
+ *						   del mapa. Si lo esta, muere. 
+ * @param prana: puntero a estructura con informacion de la rana
+**/
 static int act_rana_tronco(rana_be_t * prana);
-/*******************************************************************************
- *******************************************************************************
-                        GLOBAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
+
+/*****************************************************************************/
+//                     definicion de funciones globales                      //
+/*****************************************************************************/
 void juego_rana_init_b(uint8_t vidas,uint8_t nivel){
 	rana_init(POSX_I,POSY_I,vidas,0);
 	creacion_mapa();
 	inicia_mapa(nivel);
 }
-
 
 int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 	int estado_rana=0;
@@ -136,12 +138,9 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 	return estado_rana;
 }
 
-
-/*******************************************************************************
- *******************************************************************************
-                        LOCAL FUNCTION DEFINITIONS
- *******************************************************************************
- ******************************************************************************/
+/*****************************************************************************/
+//                      definicion de funciones locales                      //
+/*****************************************************************************/
 static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 	int contex_rana=(*pmapa)[prana -> pos_y ][prana -> pos_x];		
 	int estado_rana;
@@ -151,17 +150,17 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 		case WATER:
 		case OCUPADO:
 		case DEAD:	
-			/*Rana en MUERE, en agua, auto y camion*/	
+			//Rana MUERE si toca el agua, un auto o un camion
 			rana_muere(prana);
 			estado_rana=MUERE;
 			break;
 		case STREET: 
 		case SAFE:	
-			/*Rana VIVE, en calle o zona segura*/
+			//Rana VIVE en calle o en zona segura
 			estado_rana=VIVE;
 			break;
 		case WIN:
-			/*Rana en linea de llegada*/
+			//Rana en linea de llegada
 			prana->llegadas++;
 			if(prana->timeout==1){
 				prana->tiempo_res=0;
@@ -180,16 +179,16 @@ static int rana_contex(rana_be_t * prana,mapa_t * pmapa){
 static int act_rana_tronco(rana_be_t * prana){
 	int estado_rana=0;
 	carril_t * linea;
-	linea=get_carril((prana->pos_y) - 2);/*Linea de tronco en pos_y-DEAD-HOME*/
+	linea=get_carril((prana->pos_y) - 2);//Linea de tronco en pos_y-DEAD-HOME
 	if(linea->act_prev==1){
-		/*Si el tronco se movio, entonces la rana se mueve con el*/
+		//Si el tronco se movio, entonces la rana se mueve con el
 		if(linea->direccion==IZQ_A_DER){
 			prana->pos_x++;	
 		}
 		else{	
 			prana->pos_x--;	
 		}
-		/*Si la rana sale del mapa por estar en el tronco, muere*/
+		//Si la rana sale del mapa por estar en el tronco, muere
 		if(prana->pos_x<0 || prana->pos_x >=SIZE){
 			rana_muere(prana);
 			estado_rana=MUERE;
@@ -205,6 +204,6 @@ static int act_rana_tronco(rana_be_t * prana){
 }
 
 static void rana_muere(rana_be_t * prana){
-	prana->vidas--;
-	rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas);
+	prana->vidas--; //se decrementa la cantidad de vidas
+	rana_init(POSX_I,POSY_I,prana->vidas,prana->llegadas); //la rana vuelve al inicio
 }

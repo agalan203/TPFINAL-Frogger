@@ -3,73 +3,68 @@
   @brief    +funciones que administran el backend del juego+
   @author   +Grupo 1: Cristian Meichtry, Juan Martin Rodriguez+
  ******************************************************************************/
-
 #ifndef _BACKEND_H_
 #define _BACKEND_H_
 
-/*******************************************************************************
- * INCLUDE HEADER FILES
- ******************************************************************************/
-
+/*****************************************************************************/
+//                               Headers Files                               //
+/*****************************************************************************/
 #include "rana.h"
 #include "mapa.h"
 
-/*******************************************************************************
- * CONSTANT AND MACRO DEFINITIONS USING #DEFINE
- ******************************************************************************/
-#define POSX_I SIZE/2
-#define POSY_I SIZE-1
-#define MAX_TIEMPO 11
-#define SEG_POR_NIV 2
-/*******************************************************************************
- * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
- ******************************************************************************/
+/*****************************************************************************/
+//                 constantes para los posiciones iniciales                  //
+/*****************************************************************************/
+#define POSX_I SIZE/2 //coordenada x inicial
+#define POSY_I SIZE-1 //coordenada y inicial
+
+/*****************************************************************************/
+//                        constantes el tiempo de bonus                      //
+/*****************************************************************************/
+#define MAX_TIEMPO 11 //tiempo maximo para conseguir bonus
+#define SEG_POR_NIV 2 //segundos que se restan al tiempo maximo para bonus
+
+/*****************************************************************************/
+//                  constantes para el desarrollo del juego                  //
+/*****************************************************************************/
 
 enum estado_juego {VIVE=0,MUERE,LLEGO,PAUSA};
 
-/*******************************************************************************
- * FUNCTION PROTOTYPES WITH GLOBAL SCOPE
- ******************************************************************************/
-/*
- * @brief Esta funcion se encarga de preparar el juego. Creando el mapa, dando vidas 
- * 		iniciales e inicializando los objetos del primer nivel.
- * @param param1 vidas: Cantidad de vidas que va a tener la rana en el juego.
- * 	  param2 nivel: Nivel inicial 
- **/
+/*****************************************************************************/
+//                      prototipos de funciones globales                     //
+/*****************************************************************************/
+
+ /*****************************************************************************
+ * @brief juego_rana_init_b: prepara el juego. Crea el mapa, asigna las vidas 
+ * 		                       iniciales e inicializa los objetos del primer nivel
+ * @param vidas: Cantidad de vidas que va a tener la rana en el juego.
+ * @param nivel: nivel inicial
+ */
 void juego_rana_init_b(uint8_t vidas,uint8_t nivel);
 
-/*
- * @brief Esta funcion se encarga de administrar el juego a lo largo del tiempo de juego.
- * 		Este tiempo de juego no incluye el menu de inicio, menu de pausa, o fin 
- * 		del juego.
- * 		Actualiza los estados de la rana y el mapa, realizando sus respectivas 
- * 		comparaciones.
- * 		Ademas, notifica a donde fue llamada con el estado del juego.
- * @param param1 evento: Se recibe un caracter con el evento proveniente del jugador.
- * 		Donde: evento='r' indica derecha.
- * 		       evento='l' indica izquierda.
- *		       evento='u' indica arriba.
- *		       evento='d' indica abajo.
- *		       evento='0' indica que la rana no se mueve por el jugador.
- *	 	       evento='p' indica que el jugador puso en pausa el juego. 
- * 	  param2 nivel: Se recibe el nivel que debe correr el juego. Si se cambia de 
- * 	  	nivel, la funcion reconoce la variacion y ajusta nuevas configuraciones
- * 	  	a los obejetos del mapa.
- * 	  param3 rana: Direccion de puntero a rana_main. En esta estructura se van 
- * 	  	actualizar la informacion de la rana. Y en este puntero se copia 
- * 	  	la direccion de	dicha estructura, permitiendo que se acceda a la 
- * 	  	informacion en otra parte el programa.
- * 	  param4 mapa: Direccion de puntero a mapa. En este puntero se copia la 
- * 	  direccion del mapa, para poder accederlo desde otra parte del programa.
- * @return Devuelve el estado del juego.
- * 		Si la rana murio, devuelve MUERE.
- * 		Si la rana llego a la casa, devuelve LLEGO.
- * 		Si la rana vive, devuelve VIVE.
- * 		Si se invoco la funcion con el evento pausa, devuelve PAUSA.
- **/
+ /*****************************************************************************
+ * @brief juego_rana_b: administrar el juego a lo largo del tiempo de juego real
+ *                      (no se incluye tiempo de pausa, ni de inicio, ni de fin)
+ *                      Actualiza los estados de la rana y del mapa (segun el nivel)
+ *                      Y devuelve el estado actual de juego.
+ * @param evento: evento proveniente del jugador. Donde:
+ *                'r' indica derecha.
+ * 		            'l' indica izquierda.
+ *		            'u' indica arriba.
+ *		            'd' indica abajo.
+ *		            '0' indica que la rana no se mueve por el jugador.
+ *	 	            'p' indica que el jugador puso en pausa el juego. 
+ * @param nivel: nivel que debe correr el juego
+ * @param rana: direccion del puntero a la estructura que contiene informacion sobre la rana
+ * @param mapa: direccion de puntero a mapa
+ * @return Devuelve el estado actual del juego.
+ * 		     Si la rana murio, devuelve MUERE.
+ * 		     Si la rana llego al otro lado, devuelve LLEGO.
+ * 		     Si la rana vive, devuelve VIVE.
+ * 		     Si se invoco la funcion con el evento pausa, devuelve PAUSA.
+ */
 int juego_rana_b(char evento, uint8_t nivel, rana_be_t ** rana, mapa_t ** mapa);
 
-/*******************************************************************************
- ******************************************************************************/
+/*****************************************************************************/
 
 #endif // _BACKEND_H_
