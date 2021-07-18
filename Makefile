@@ -31,5 +31,8 @@ frontall.o: frontall.c globalstuff.h
 mainallegro.o: mainallegro.c backend.h frontall.h mainfun.h
 	${CC} ${OPTIONS} -c  mainallegro.c
 
-clean:
-	rm *.o
+cleanraspi:
+	rm mainraspi.o mainfun.o frontraspi.o backend.o mapa.o rana.o
+
+cleanallegro:
+	rm mainfun.o frontall.o backend.o mapa.o rana.o mainallegro.o
