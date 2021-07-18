@@ -23,7 +23,7 @@
 /*****************************************************************************/
 #define NDESBR 0 //indica que no hubo desborde
 #define DESBR 1 //indica que hubo desborde
-#define TITILE 0.1 //frecuencia con la que titila el led de la rana en Raspberry PI
+#define TITILE 0.02 //frecuencia con la que titila el led de la rana en Raspberry PI
 
 /*****************************************************************************/
 //                         Estructura del objeto rana                        //
