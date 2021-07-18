@@ -99,7 +99,6 @@ int main (void){
             numTostring();
             //muestro el mundo inicial en el display
             output_world_raspi(&mundo,&rana);
-            output_frog_raspi(&rana);
             
 
             //incio el loop del juego
@@ -157,7 +156,6 @@ int main (void){
                 //el mundo solo se actualiza y muestra si la rana esta viva y no se pidio salir del juego
                 if((estado == VIVE) && (!exit_game)){
                     output_world_raspi(&mundo,&rana);
-                    output_frog_raspi(&rana);
                 }
 
                 //actualizo el puntaje

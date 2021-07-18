@@ -213,22 +213,18 @@ void output_world_raspi (mundo_t * mundo, rana_t * frog){  //muestra el mundo en
         }
     }
     
-    disp_write(frog->coords, D_OFF);
-    
-    disp_update();
-}
-
-/********************************* OUTPUT FROG **************************************/
-void output_frog_raspi (rana_t * rana){ //se debe invocar cada una cantidad establecida de tiempo, menor que la de actualizacion del display
-    if (rana->estado == VIVA){
-        if (rana->encendida == ENCENDIDA){
-            disp_write(rana->coords, D_OFF);
+    if (frog->estado == VIVA){
+        if (frog->encendida == ENCENDIDA){
+            disp_write(frog->coords, D_OFF);
         }
         else {
-            disp_write(rana->coords, D_ON);
+            disp_write(frog->coords, D_ON);
         }
         disp_update();
     }
+    //disp_write(frog->coords, D_OFF);
+    
+    disp_update();
 }
 
 /********************************* MENU PAUSA **************************************/

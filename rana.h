@@ -21,7 +21,7 @@
 /*Constantes del modulo*/
 #define NDESBR 0
 #define DESBR 1
-#define TITILE 2
+#define TITILE 0.003
 /*******************************************************************************
  * ENUMERATIONS AND STRUCTURES AND TYPEDEFS
  ******************************************************************************/
