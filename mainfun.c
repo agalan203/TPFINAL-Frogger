@@ -1,5 +1,5 @@
 /***************************************************************************//**
-  @file     +mainfun.h+
+  @file     +mainfun.c+
   @brief    +Funciones de main para el juego en librerias allegro o raspberry+ 
   @author   +Grupo 1: Meichtry,Rodriguez,Ruiz,Galan+
  ******************************************************************************/

@@ -71,7 +71,3 @@ rana_be_t * rana_frogger(char mov,uint8_t tiempo_max){
 rana_be_t * get_rana(void){
 	return &rana_frg;
 }
-
-
-
-

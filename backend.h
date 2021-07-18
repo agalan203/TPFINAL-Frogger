@@ -1,5 +1,5 @@
 /***************************************************************************//**
-  @file     +backend.c+
+  @file     +backend.h+
   @brief    +funciones que administran el backend del juego+
   @author   +Grupo 1: Cristian Meichtry, Juan Martin Rodriguez+
  ******************************************************************************/
