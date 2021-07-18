@@ -32,4 +32,4 @@ mainallegro.o: mainallegro.c backend.h frontall.h mainfun.h
 	${CC} ${OPTIONS} -c  mainallegro.c
 
 clean:
-	rm mapa.o mainfun.o rana.o backend.o frontall.o mainallegro.o mainraspi.o frontraspi.o
+	rm *.o
