@@ -25,8 +25,6 @@ char puntajestring [5] = "0000"; //puntaje actual en formato string
 
 int main (void){
     //variables locales al main
-//    uint16_t puntajeactual = 0; //puntaje numerico actual    
-//    char puntajestring [5] = "0000"; //puntaje actual en formato string
     int nivel = 1;
     int estado;
     int fila = 0;
