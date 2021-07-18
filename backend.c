@@ -10,6 +10,12 @@
 #include "backend.h"
 
 /*****************************************************************************/
+//                    variables estaticas de alcance global                  //
+/*****************************************************************************/
+static uint8_t pausa; //flag para indicar que se pauso el juego
+static uint8_t prev_nivel; //flag para indicar cambio de nivel
+
+/*****************************************************************************/
 //                      prototipos de funciones locales                      //
 /*****************************************************************************/
 
@@ -59,26 +65,26 @@ void juego_rana_init_b(uint8_t vidas,uint8_t nivel){
 	rana_init(POSX_I,POSY_I,vidas,0);
 	creacion_mapa();
 	inicia_mapa(nivel);
+	pausa = 0;
+	prev_nivel = nivel;
 }
 
 int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 	int estado_rana=0;
  	int tm_max=MAX_TIEMPO-(nivel-1)*SEG_POR_NIV;
 	uint8_t rana_tronco=0;
-	static uint8_t prev_nivel=1;
-	static uint8_t pausa=0;
 	static clock_t time_ps;
 	
-	/*Cambio de nivel*/
+	//Cambio de nivel
 	if(nivel!=prev_nivel){
 		rana_be_t * prana = get_rana();
 		juego_rana_init_b(prana->vidas,nivel);
 		prev_nivel=nivel;
 	}
 
-	/*Juego en pausa*/
+	//Juego en pausa
 	if(evento=='p'){
-		/*Pongo en pausa lo que corresponda*/
+		//Pongo en pausa lo que corresponda
 		*mapa=get_mapa();
 		*rana=get_rana();
 		if(pausa==0){
@@ -88,13 +94,13 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 		estado_rana=PAUSA;		
 	}
 	else{
-		/*Al salir de la pausa reanudo el juego desde el tiempo que corresponde*/
+		//Al salir de la pausa reanudo el juego desde el tiempo que corresponde
 		if(pausa==1){
-			/*Actualizo tiempos relativos*/
+			//Actualizo tiempos relativos
 			int i;
 			int cant_obj=SIZE-2-1-1;	
 			carril_t * linea;
-			for(i=0;i<cant_obj;i++){	/*Recorre las lineas donde hay objetos (SIZE-2*SAFE-HOME-DEAD)*/
+			for(i=0;i<cant_obj;i++){	//Recorre las lineas donde hay objetos (SIZE-2*SAFE-HOME-DEAD)
 				linea=get_carril(i);	
 				linea->tiempo_previo+=(clock()-time_ps);	
 			}	
@@ -102,26 +108,26 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 			prana->tiempo+=(clock()-time_ps);	
 			pausa=0;
 		}
-		/*Sigue el juego*/	
+		//Sigue el juego
 		rana_be_t * prana; 
 		mapa_t * pmapa;
 
-		/*Actualizo estado de la rana*/
+		//Actualizo estado de la rana
 		prana=rana_frogger(evento,tm_max);
 
-		/*Antes de actualizar el mapa me fijo si la rana esta en un tronco*/
+		//Antes de actualizar el mapa me fijo si la rana esta en un tronco
 		pmapa=get_mapa();
 		rana_tronco=( ((*pmapa)[prana->pos_y][prana->pos_x]) == LOG) ? 1 : 0;
 
-		/*Actualizo mapa*/
+		//Actualizo mapa
 		pmapa=actualiza_mundo();
 
-		/*Comparo el caso Rana-Mundo, si la rana esta un tronco*/
+		//Comparo el caso Rana-Mundo, si la rana esta un tronco
 		if(rana_tronco==1){
 			estado_rana=act_rana_tronco(prana);
 		}
 
-		/*Comparo Rana-Mundo, si la rana no esta en un tronco*/
+		//Comparo Rana-Mundo, si la rana no esta en un tronco
 		if(prana->desborde==DESBR){
 			rana_muere(prana);
 			estado_rana=MUERE;
@@ -130,9 +136,9 @@ int juego_rana_b(char evento,uint8_t nivel, rana_be_t ** rana,mapa_t ** mapa){
 			estado_rana=rana_contex(prana,pmapa);
 		}
 		
-		/*Copio info de rana en puntero parametro*/
+		//Copio info de rana en puntero parametro
 		*rana=prana;
-		/*Copio direccion de mapa*/
+		//Copio direccion de mapa
 		*mapa=pmapa;
 	}
 	return estado_rana;
