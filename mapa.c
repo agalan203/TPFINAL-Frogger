@@ -13,7 +13,7 @@
 /*****************************************************************************/
 //                      definicion de variables locales                      //
 /*****************************************************************************/
-static mapa_t mapa;
+static mapa_t mapa; //declaracion del mapa de juego
 
 //definicion e inicializacion de las estructuras de cada carril (no se inicializaron todos los campos)
 static carril_t tronco2 = {0, 0, 1, 1, 2, LOG};
