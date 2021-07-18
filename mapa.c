@@ -188,11 +188,11 @@ static void crear_troncos(carril_t* arr_troncos[6], int cant_vel){ //recibe la c
         arr_troncos[i] -> velocidad = rand() % cant_vel + 1;
         switch(arr_troncos[i] -> size_obj){ //define el espacio libre que puede haber entre los troncos dependiendo del size de los mismos
             case 4:
-                arr_troncos[i] -> cant_obj = rand() % 3 + 1;
+                arr_troncos[i] -> cant_obj = rand() % 2 + 2;
                 espacio_libre = (arr_troncos[i] -> cant_obj == 3) ? 2 : 3;
                 break;
             case 3:
-                arr_troncos[i] -> cant_obj = rand() % 4 + 2;
+                arr_troncos[i] -> cant_obj = rand() % 3 + 2;
                 espacio_libre = (arr_troncos[i] -> cant_obj == 4) ? 1 : ((arr_troncos[i] -> cant_obj == 3 ) ? 2 : 4);
                 break;
             case 2:
