@@ -1,6 +1,9 @@
 CC := gcc
 OPTIONS = -g -Wall
 
+#Para compilar para plataforma RPI: make froggerraspi
+#Para compilar para plataforma 64-bit grafica: make froggerallegro
+
 froggerraspi: mainraspi.o mainfun.o frontraspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o
 	${CC} ${OPTIONS} mainraspi.o mainfun.o frontraspi.o backend.o joydrv.o termlib.o disdrv.o mapa.o rana.o -o froggerraspi
 
