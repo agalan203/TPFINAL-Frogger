@@ -74,6 +74,7 @@ static void actualiza_linea(carril_t* carril);
 **/
 static void carga_mapa(carril_t* linea);
 
+
 /*****************************************************************************/
 //                     definicion de funciones globales                      //
 /*****************************************************************************/
