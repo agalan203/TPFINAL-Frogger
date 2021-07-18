@@ -303,6 +303,7 @@ int main (void){
                 if (estado == MUERE){
                     auxfrog.estado = MUERTA; //si fue atropellada lo muestro
                     output_world_all (&auxfrog, &mundo,background,automovil1,automovil2,camion,log1,log2,log3,log4,ranita,ranamuerta,lives,llego);
+                    al_flush_event_queue(event_queue);
                     if (rana.vidas == 0){
                         istopscore(puntajestring);
                         exit_game = 1; //si perdio todas las vidas lo indico para mostrar gameover y salir
